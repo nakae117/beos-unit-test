@@ -12,7 +12,7 @@
 
       <v-col class="mb-4">
         <h1 class="display-2 font-weight-bold mb-3">
-          Pruebas unitaria
+          Pruebas unitaria 2
         </h1>
       </v-col>
 
