@@ -1,0 +1,26 @@
+.Vue-Toastification__toast {
+  border-radius: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.Vue-Toastification__icon {
+  width: 30px !important;
+  margin-right: 1.8rem !important;
+}
+
+.Vue-Toastification__toast--success {
+  background-color: #4caf50 !important;
+}
+
+.Vue-Toastification__toast--warning {
+  background-color: #f3c323 !important;
+}
+
+.Vue-Toastification__toast--error {
+  background-color: #f54a3b !important;
+}
+
+.margin-b {
+  margin-bottom: 5px !important;
+}
