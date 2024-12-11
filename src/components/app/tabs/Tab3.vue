@@ -12,17 +12,22 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
+import { Tab3Data } from '@/Interfaces/global';
+import { PropType } from "vue";
+
 export default {
   name: "Tab-3",
 
   props: {
-    value: { type: Object, default: () => ({}) },
+    value: { 
+      type: Object as PropType<Tab3Data>,
+      default: () => ({ note: "" }) },
   },
 
   data() {
     return {
-      data: { note: "" },
+      data: { note: "" } as Tab3Data,
     };
   },
 }

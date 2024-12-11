@@ -34,7 +34,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import AppActions from "@/components/app/AppActions.vue"
 
 export default {

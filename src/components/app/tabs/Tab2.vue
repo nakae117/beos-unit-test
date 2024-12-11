@@ -47,35 +47,40 @@
   </div>
 </template>
 
-<script>
-import showToast from "@/components/UI/Toast/Toast.vue";
+<script lang="ts">
+import ToastMixin from "@/components/UI/Toast/Toast.vue";
+import { Tab2Data } from "@/Interfaces/global";
+import { PropType } from "vue";
 
 export default {
   name: "Tab-2",
 
-  mixins: [showToast],
+  mixins: [ToastMixin],
 
   props: {
-    value: { type: Object, default: () => ({}) },
+    value: {
+      type: Object as PropType<Tab2Data>,
+      default: () => ({ nro1: "", nro2: "" }),
+    }, // PropType se utiliza para definir el tipo de una prop en un componente
   },
 
   data() {
     return {
-      data: { nro1: "", nro2: "" },
+      data: { nro1: "", nro2: "" } as Tab2Data,
       result: "",
     };
   },
 
   watch: {
     data: {
-      handler(value) {
+      handler(value: Tab2Data) {
         this.$emit("input", value);
       },
       deep: true,
     },
 
     "data.nro1": {
-      handler(value) {
+      handler(value: string) {
         if (!value || !this.data.nro2) {
           this.result = "";
         }
@@ -84,7 +89,7 @@ export default {
     },
 
     "data.nro2": {
-      handler(value) {
+      handler(value: string) {
         if (!value || !this.data.nro1) {
           this.result = "";
         }
@@ -94,14 +99,15 @@ export default {
   },
 
   methods: {
-    sum() {
+    sum(): void {
       if (!this.data.nro1 || !this.data.nro2) {
         const message = "You must add both numbers";
-        return this.showToast("", message, "warning");
+        this.showToast({ title: "", message });
+        return;
       }
 
       this.result = parseFloat(this.data.nro1) + parseFloat(this.data.nro2);
     },
   },
-}
+};
 </script>

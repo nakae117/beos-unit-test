@@ -15,16 +15,33 @@
   </v-layout>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "ToastComponent",
 
+ 
   props: {
-    title: { type: String, default: "" },
-    message: { type: String, default: "" },
+    title: {
+      type: String,
+      default: "",
+    },
+    message: {
+      type: String,
+      default: "",
+    },
     errors: {
-      type: Object,
+      type: Object as () => Record<string, string[]>,
       default: () => ({}),
+    },
+  },
+
+  computed: {
+    hasErrors(): boolean {
+      return Object.keys(this.errors).length > 0;
+    },
+
+    errorList(): string[] {
+      return Object.values(this.errors).flat() as string[];
     },
   },
 };

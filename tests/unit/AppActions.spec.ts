@@ -1,14 +1,17 @@
 import Vue from 'vue'
-import { mount, createLocalVue } from '@vue/test-utils'
+import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import AppActions from '@/components/app/AppActions.vue'
 import Vuetify from 'vuetify'
+
+// Tipar localVue y vuetify
+  // montar el vuetify para que pueda reconocer la etiquetas
+const localVue = createLocalVue()
+let vuetify: Vuetify
 
 Vue.use(Vuetify)
 
 describe('AppActions.vue', () => {
-  // montar el vuetify para que pueda reconocer la etiquetas
-  const localVue = createLocalVue()
-  let vuetify
+
 
   beforeEach(() => {
     vuetify = new Vuetify()
@@ -20,11 +23,12 @@ describe('AppActions.vue', () => {
   // con el tipado correcto (props)
   it('Renders correctly', () => {
     const value = false
-    const wrapper = mount(AppActions, {
+    const wrapper: Wrapper<Vue> = mount(AppActions, { // Se usa el  Wrapper<Vue> si No necesitas tipado específico del componente
       localVue,
       vuetify,
       propsData: { value }
     })
+    
     expect(wrapper.exists()).toBe(true)
   })
 })
