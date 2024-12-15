@@ -1,40 +1,44 @@
-<script>
-import ToastContent from "./ToastContent.vue";
+<script lang="ts">
+import { ToastParams } from "@/Interfaces/toast-parms.interface";
+import { defineComponent } from "vue";
+import ToastContent from "@/components/UI/Toast/ToastContent.vue";
 
-export default {
-  name: "toast-component",
-
+export default defineComponent({
+  name: "ToastMixin",
   methods: {
-    showToast(title, message, type, errors, duration, close) {
-      let toast = errors
+    showToast({
+      title,
+      message,
+      type,
+      errors,
+      duration,
+      close,
+    }: ToastParams): void {
+      const toast = errors?.length
         ? this.$toast.error
-        : type === "success"
-        ? this.$toast.success
-        : type === "warning"
-        ? this.$toast.warning
-        : this.$toast.error;
+        : {
+            success: this.$toast.success,
+            warning: this.$toast.warning,
+            error: this.$toast.error,
+          }[type] || this.$toast.error;
 
-      const componentToast = () => ({
+      const componentToast = {
         component: ToastContent,
         props: {
           title,
           message,
           errors,
         },
-      });
+      };
 
-      const closeOnC = close && typeof close === "boolean" ? closeOnC : true;
-      const time = duration ? duration : 5000;
-
-      toast(componentToast(), {
+      toast(componentToast, {
         position: "top-right",
-        timeout: time,
-        closeOnClick: closeOnC,
+        timeout: duration || 5000,
+        closeOnClick: close ?? true,
         pauseOnFocusLoss: true,
         pauseOnHover: true,
         draggable: true,
         draggablePercent: 0.6,
-        showCloseButtonOnHover: false,
         hideProgressBar: false,
         closeButton: "button",
         icon: true,
@@ -42,9 +46,5 @@ export default {
       });
     },
   },
-};
+});
 </script>
-
-<style>
-@import "../../../styles/UI/styleToast.scss";
-</style>

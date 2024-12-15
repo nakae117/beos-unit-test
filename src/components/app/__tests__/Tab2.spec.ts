@@ -1,25 +1,28 @@
 import Vue from 'vue'
-import { mount, createLocalVue } from '@vue/test-utils'
+import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import AppActions from '@/components/app/AppActions.vue'
 import Tab2 from '@/components/app/tabs/Tab2.vue'
 import Vuetify from 'vuetify'
 import Toast from "vue-toastification";
+import { AppActionsType, Tab2Type } from '@/Interfaces/global'
+
+
+const localVue = createLocalVue()
+let vuetify: Vuetify
 
 Vue.use(Vuetify)
 Vue.use(Toast);
 
 describe('Tab2.vue', () => {
-  const localVue = createLocalVue()
-  let vuetify
 
   beforeEach(() => {
     vuetify = new Vuetify()
   })
 
-  it('Calcular una suma', () => {
+  it('Calcular una suma', async () => {
     console.log("=============== PRUEBA 2 ======================");
     const value = true
-    const wrapper = mount(AppActions, {
+    const wrapper = mount<AppActionsType>(AppActions, {
       localVue,
       vuetify,
       propsData: { value },
@@ -42,7 +45,7 @@ describe('Tab2.vue', () => {
 
     // Buscamos los campos nro1 y nro2
     expect(wrapper.findComponent(Tab2));
-    const tab2Component = wrapper.findComponent(Tab2);
+    const tab2Component = wrapper.findComponent(Tab2) as Wrapper<Tab2Type>;
     const nro1Field = tab2Component.find("#nro1");
     const nro2Field = tab2Component.find("#nro2");
 
@@ -53,8 +56,8 @@ describe('Tab2.vue', () => {
     // Ejecutar la suma
     const sumButton = tab2Component.find("#sum-button");
     expect(sumButton.exists()).toBe(true);
-    sumButton.trigger("click");
-    wrapper.vm.$nextTick();
+    await sumButton.trigger("click");
+    await wrapper.vm.$nextTick();
 
     // Verificar que el resultado sea correcto
     expect(tab2Component.vm.result).toBe(3);

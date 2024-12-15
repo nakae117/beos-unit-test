@@ -34,8 +34,8 @@
   </v-app>
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld';
+<script lang="ts">
+import HelloWorld from '@/components/HelloWorld.vue';
 
 export default {
   name: 'App',
@@ -44,7 +44,7 @@ export default {
     HelloWorld,
   },
 
-  data: () => ({
+  data: () =>  ({
     //
   }),
 };

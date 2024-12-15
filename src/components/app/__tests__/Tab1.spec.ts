@@ -1,16 +1,20 @@
 import Vue from 'vue'
-import { mount, createLocalVue } from '@vue/test-utils'
+import { mount, createLocalVue, Wrapper } from '@vue/test-utils'
 import AppActions from '@/components/app/AppActions.vue'
 import Tab1 from '@/components/app/tabs/Tab1.vue'
 import Vuetify from 'vuetify'
 import Toast from "vue-toastification";
+import { AppActionsType, Tab1Type } from '@/Interfaces/global'
+
+const localVue = createLocalVue()
+let vuetify: Vuetify
+
+
 
 Vue.use(Vuetify)
 Vue.use(Toast);
 
 describe('AppActions.vue', () => {
-  const localVue = createLocalVue()
-  let vuetify
 
   beforeEach(() => {
     vuetify = new Vuetify()
@@ -19,7 +23,7 @@ describe('AppActions.vue', () => {
   it('Pasar al segundo Tab cuando se pisa el botón Next', () => {
     console.log("=============== PRUEBA 1 ======================");
     const value = true
-    const wrapper = mount(AppActions, {
+    const wrapper =  mount<AppActionsType>(AppActions, { // Se usa el mount<AppActionsType> si necesitas tipado específico del componente ejemplo el tab
       localVue,
       vuetify,
       propsData: { value },
@@ -42,10 +46,14 @@ describe('AppActions.vue', () => {
 
     // Asegurarse de que estamos en el primer tab
     expect(wrapper.vm.tab).toBe('tab1');
-    
-    // Buscamos los campos name y description
+
+    // Buscamos el componente Tab1
     expect(wrapper.findComponent(Tab1));
-    const tab1Component = wrapper.findComponent(Tab1);
+    // as Wrapper<Tab1Type>  Indica que el tipo del resultado es un Wrapper<Tab1Type>.  Wrapper es una clase de
+    //  @vue/test-utils que proporciona métodos para interactuar con el componente y verificar su estado.
+    const tab1Component = wrapper.findComponent(Tab1) as Wrapper<Tab1Type>; 
+
+    // Buscamos los campos name y description
     const nameField = tab1Component.find('#name');
     const descriptionField = tab1Component.find('#description');
 
@@ -54,7 +62,7 @@ describe('AppActions.vue', () => {
     descriptionField.setValue('Test Descripcion');
 
     // Simular el seteo del formulario de Tab1 hacia AppActions
-    tab1Component.vm.$emit('input', tab1Component.vm.data);
+    tab1Component.vm.$emit('input', tab1Component.vm.$data.data);
 
     // Buscamos el botón, y clickeamos
     const nextButton = wrapper.find('#next-button');
@@ -66,5 +74,5 @@ describe('AppActions.vue', () => {
     expect(wrapper.vm.tab).toBe('tab2');
 
     console.log("TAB", wrapper.vm.tab);
-})
+  })
 })
