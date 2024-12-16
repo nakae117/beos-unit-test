@@ -35,6 +35,10 @@
           <v-tab-item value="tab3">
             <tab3 ref="componentTab3" v-model="data.tab3" />
           </v-tab-item>
+
+          <v-tab-item value="tab4">
+            <tab4 ref="componentTab4" v-model="data.tab4" />
+          </v-tab-item>
         </v-tabs-items>
       </v-card-text>
 
@@ -54,7 +58,7 @@
           </v-btn>
 
           <v-btn
-            v-if="tab !== 'tab3'"
+            v-if="tab !== 'tab4'"
             id="next-button"
             class="px-7 white--text mr-2"
             color="primary"
@@ -86,6 +90,7 @@
 import Tab1 from "@/components/app/tabs/Tab1.vue";
 import Tab2 from "@/components/app/tabs/Tab2.vue";
 import Tab3 from "@/components/app/tabs/Tab3.vue";
+import Tab4 from "@/components/app/tabs/Tab4.vue";
 import ToastMixin from "@/components/UI/Toast/Toast.vue";
 import { Tab, dataAppActions } from "@/Interfaces/global";
 
@@ -96,6 +101,7 @@ export default {
     Tab1,
     Tab2,
     Tab3,
+    Tab4
   },
 
   mixins: [ToastMixin],
@@ -111,11 +117,13 @@ export default {
         { name: "tab1", label: "First" },
         { name: "tab2", label: "Second" },
         { name: "tab3", label: "Third" },
+        { name: "tab4", label: "Fourth" },
       ] as Tab[],
       data: {
         tab1: { name: "", description: "" },
         tab2: { nro1: "", nro2: "" },
         tab3: { note: "" },
+        tab4: { nro1: "", nro2: "" },
       } as dataAppActions,
     };
   },
@@ -146,18 +154,23 @@ export default {
           this.showToast({ title: "", message, type: "warning" });
           return;
         }
-
         this.tab = "tab2";
-      } else {
+      } else if(this.tab==='tab2') {
         this.tab = "tab3";
+      }
+      else  {
+        this.tab = "tab4";
       }
     },
 
     back(): void {
-      if (this.tab === "tab3") {
+      if (this.tab === "tab4") {
+        this.tab = "tab3";
+      } else if(this.tab==='tab3') {
         this.tab = "tab2";
-      } else {
-        this.tab = "tab1";
+      }
+      else{
+         this.tab = "tab1";
       }
     },
 

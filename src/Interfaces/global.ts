@@ -4,6 +4,7 @@ export interface Tab2Data { nro1: string; nro2: string }
 
 export interface Tab3Data { note: string }
 
+export interface Tab4Data { nro1: string; nro2: string }
 export interface Tab {
     name: string;
     label: string;
@@ -22,9 +23,13 @@ export interface Tab2Type extends Vue {
     data: Tab2Data;
     result: string;
 }
-
+export interface Tab4Type extends Vue {
+    data: Tab4Data;
+    result: string;
+}
 export interface dataAppActions {
     tab1: Tab1Data,
     tab2: Tab2Data,
     tab3: Tab3Data,
+    tab4: Tab4Data
 }

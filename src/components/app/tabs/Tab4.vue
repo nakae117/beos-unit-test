@@ -34,7 +34,7 @@
 
     <div class="px-2 mt-1 text-center">
       <v-btn
-        id="sum-button"
+        id="div-button"
         class="px-7 white--text mr-2"
         color="primary"
         rounded
@@ -51,7 +51,7 @@
 import showToast from "@/components/UI/Toast/Toast.vue";
 
 export default {
-  name: "Tab-2",
+  name: "Tab-4",
 
   mixins: [showToast],
 
@@ -94,13 +94,15 @@ export default {
   },
 
   methods: {
-    sum() {
+    div() {
       if (!this.data.nro1 || !this.data.nro2) {
         const message = "You must add both numbers";
-        return this.showToast("", message, "warning");
+        return this.showToast({ title: "", message ,type:'error'});
       }
-
-      this.result = parseFloat(this.data.nro1) + parseFloat(this.data.nro2);
+      if (this.data.nro1 <= 0 || this.data.nro2 <= 0) { 
+        const message = "Numbers must be greater than 0"; 
+        return  this.showToast({ title: "", message, type:'error' });} 
+      this.result = parseFloat(this.data.nro1) / parseFloat(this.data.nro2);
     },
   },
 }
