@@ -22,6 +22,10 @@ export interface Tab2Type extends Vue {
     data: Tab2Data;
     result: string;
 }
+export interface Tab3Type extends Vue {
+    data: Tab3Data;
+    result: string;
+}
 
 export interface dataAppActions {
     tab1: Tab1Data,
