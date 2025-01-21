@@ -30,20 +30,22 @@
 
     <v-main>
       <HelloWorld msg="Botón de pruebas"/>
-      <StudentModule/>
+
+      <StudentsTable />
     </v-main>
   </v-app>
 </template>
 
 <script lang="ts">
 import HelloWorld from '@/components/HelloWorld.vue';
-import StudentModule from './components/StudentModule.vue';
+import StudentsTable from '@/components/student/StudentsTableTest.vue';
 
 export default {
   name: 'App',
 
   components: {
-    StudentModule,
+    HelloWorld,
+    StudentsTable,
   },
 
   data: () =>  ({
