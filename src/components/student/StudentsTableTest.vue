@@ -1,43 +1,50 @@
 <template>
-  <v-container>
-    <v-skeleton-loader
-      v-if="loading"
-      type="table-heading, list-item-two-line, table-tfoot"
-    />
+  <div>
+    <v-container>
+      <v-btn color="primary" @click="openCreate">Crear Estudiante</v-btn>
+      <v-skeleton-loader
+        v-if="loading"
+        type="table-heading, list-item-two-line, table-tfoot"
+      />
+  
+      <v-data-table
+        v-else
+        :headers="headers"
+        :items="students"
+        :items-per-page.sync="options.per_page"
+        class="elevation-1"
+        :page.sync="options.page"
+        :server-items-length="total"
+        :footer-props="footerProps"
+      >
+        <template v-slot:[`item.actions`]="{ item }">
+          <v-btn icon @click="item.id">
+            <v-icon>visibility</v-icon>
+          </v-btn>
 
-    <v-data-table
-      v-else
-      :headers="headers"
-      :items="students"
-      :items-per-page.sync="options.per_page"
-      class="elevation-1"
-      :page.sync="options.page"
-      :server-items-length="total"
-      :footer-props="footerProps"
-    >
-      <template v-slot:[`item.actions`]="{ item }">
-        <v-btn icon @click="item.id">
-          <v-icon>visibility</v-icon>
-        </v-btn>
+          <v-btn icon @click="item.id">
+            <v-icon>edit</v-icon>
+          </v-btn>
 
-        <v-btn icon @click="item.id">
-          <v-icon>edit</v-icon>
-        </v-btn>
-
-        <v-btn icon @click="item.id">
-          <v-icon>delete</v-icon>
-        </v-btn>
-      </template>
-    </v-data-table>
-  </v-container>
+          <v-btn icon @click="item.id">
+            <v-icon>delete</v-icon>
+          </v-btn>
+        </template>
+      </v-data-table>
+    </v-container>
+    <CreateStudent :value="isOpenModal" @input="val => isOpenModal = val"/>
+    </div>
 </template>
 
 <script>
 import axios from 'axios';
+import CreateStudent from './CreateStudent.vue';
 
 export default {
   name: "StudentTable",
-
+  components: {
+    CreateStudent,
+  },
   data() {
     return {
       headers: [
@@ -59,6 +66,7 @@ export default {
         "items-per-page-options": [5, 10, 15, 20, 50, 100],
         "show-first-last-page": true,
       },
+      isOpenModal: false,
     };
   },
 
@@ -90,6 +98,9 @@ export default {
         console.error("Error making request:", error);
         this.loading = false;
       });
+    },
+    openCreate(){
+      this.isOpenModal = true;
     }
   }
 };
