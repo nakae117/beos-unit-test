@@ -18,9 +18,8 @@ describe('CreateStudent.vue', () => {
       vuetify
     })
   })
-/*Asegúrate de que tu componente CreateStudent.vue tenga una propiedad isModalOpen 
- que se establece en true cuando el modal se abre.
- Si esta propiedad no existe, deberás agregarla a tu componente. */
+/*El componente CreateStudent.vue debe tener una propiedad isModalOpen 
+ que se establece en true cuando el modal se abre. */
   it('should open the modal when the "Crear Estudiante" button is clicked', async () => {
     const button = wrapper.find('button#create-button')
     await button.trigger('click')
@@ -35,38 +34,36 @@ describe('CreateStudent.vue', () => {
     expect(wrapper.vm.isModalOpen).toBe(true)
     expect(endTime - startTime).toBeLessThan(2000)
   })
-  /*  - Campos Requeridos:
-        Cédula
-        Nombre/Apellido
-        Correo
-        Curso Asignado o grado
- */
 
     it('should verify that required fields are filled and have valid values before saving data', async () => { 
         const button = wrapper.find('button#save-button') 
-        // Asumiendo que tienes inputs con ids 'cedula', 'nombre', 'correo' y 'curso' 
-        const cedula = wrapper.find('input#cedula') 
-        const nombre = wrapper.find('input#nombre') 
-        const correo = wrapper.find('input#correo') 
-        const curso = wrapper.find('input#curso') 
+       
+        const identity = wrapper.find('input#identity') 
+        const name = wrapper.find('input#name') 
+        const lastName = wrapper.find('input#lastName') 
+        const email = wrapper.find('input#email') 
+        const grade = wrapper.find('input#grade') 
 
-        await cedula.setValue('V12345678') 
-        await nombre.setValue('John Doe') 
-        await correo.setValue('john.doe@example.com') 
-        await curso.setValue('Mathematics') 
+        await identity.setValue('V12345678') 
+        await name.setValue('John') 
+        await lastName.setValue('Doe')
+        await email.setValue('john.doe@example.com') 
+        await grade.setValue('Mathematics') 
         await button.trigger('click') 
 
-        const guardarButton = wrapper.find('button#guardar-button') 
-        await guardarButton.trigger('click') 
+        const saveButton = wrapper.find('button#save-button') 
+        await saveButton.trigger('click') 
 
-        expect(cedula.element.value).not.toBe('')  
-        expect(cedula.element.value).toMatch(/^([VE])[0-9]{7,8}$/) 
-        expect(nombre.element.value).not.toBe('')      
-        expect(nombre.element.value).toMatch(/^[a-zA-Z\s]{1,32}$/) 
-        expect(correo.element.value).not.toBe('')  
-        expect(correo.element.value).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) 
-        expect(curso.element.value).not.toBe('')  
-        expect(curso.element.value).toMatch(/^[a-zA-Z\s]+$/) 
+        expect(identity.element.value).not.toBe('')  
+        expect(identity.element.value).toMatch(/^([VE])[0-9]{7,8}$/) 
+        expect(name.element.value).not.toBe('')      
+        expect(name.element.value).toMatch(/^[a-zA-Z\s]{1,32}$/) 
+        expect(lastName.element.value).not.toBe('')      
+        expect(lastName.element.value).toMatch(/^[a-zA-Z\s]{1,32}$/) 
+        expect(email.element.value).not.toBe('')  
+        expect(email.element.value).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) 
+        expect(grade.element.value).not.toBe('')  
+        expect(grade.element.value).toMatch(/^[a-zA-Z\s]+$/) 
         expect(wrapper.vm.isModalOpen).toBe(true) 
     })
     
@@ -74,23 +71,23 @@ describe('CreateStudent.vue', () => {
         const createButton = wrapper.find('button#create-button') 
         await createButton.trigger('click') 
         
-        const direccion = wrapper.find('input#direccion') 
-        const edad = wrapper.find('input#edad') 
-        const genero = wrapper.find('select#genero') 
-        const telefono = wrapper.find('input#telefono') 
+        const address = wrapper.find('input#address') 
+        const age = wrapper.find('input#age') 
+        const gender = wrapper.find('select#gender') 
+        const phone = wrapper.find('input#phone') 
 
-        await direccion.setValue('123 Main St') 
-        await edad.setValue('12') 
-        await genero.setValue('Masculino') 
-        await telefono.setValue('04141234567') 
+        await address.setValue('123 Main St') 
+        await age.setValue('12') 
+        await gender.setValue('Masculino') 
+        await phone.setValue('04141234567') 
         
-        const guardarButton = wrapper.find('button#guardar-button') 
-        await guardarButton.trigger('click') 
+        const saveButton = wrapper.find('button#save-button') 
+        await saveButton.trigger('click') 
         
         // Validaciones de campos opcionales 
-        expect(direccion.element.value.length).toBeLessThanOrEqual(50) 
-        expect(edad.element.value).toMatch(/^[0-9]{1,2}$/) 
-        expect(parseInt(edad.element.value)).toBeGreaterThanOrEqual(4) 
-        expect(telefono.element.value).toMatch(/^[0-9]{11}$/) 
+        expect(address.element.value.length).toBeLessThanOrEqual(50) 
+        expect(age.element.value).toMatch(/^[0-9]{1,2}$/) 
+        expect(parseInt(age.element.value)).toBeGreaterThanOrEqual(4) 
+        expect(phone.element.value).toMatch(/^[0-9]{11}$/) 
     })
 })
