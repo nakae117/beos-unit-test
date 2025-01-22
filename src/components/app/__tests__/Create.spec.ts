@@ -15,7 +15,8 @@ describe('CreateStudent.vue', () => {
     vuetify = new Vuetify()
     wrapper = mount(CreateStudent, {
       localVue,
-      vuetify
+      vuetify,
+      propsData: { isModalOpen: true }
     })
   })
 /*El componente CreateStudent.vue debe tener una propiedad isModalOpen 
