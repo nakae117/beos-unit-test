@@ -8,7 +8,7 @@
             <v-col>
               <v-text-field 
                 label="Nombre" 
-                v-model="form.name" 
+                v-model="form.first_name" 
                 outlined
                 :rules="[rules.required, rules.name]" 
                 maxlength="32"
@@ -30,7 +30,7 @@
             <v-col>
               <v-text-field 
                 label="Apellido" 
-                v-model="form.lastName" 
+                v-model="form.last_name" 
                 outlined
                 :rules="[rules.required, rules.name]" 
                 maxlength="32"
@@ -60,7 +60,7 @@
               />
               <v-text-field 
                 label="Curso" 
-                v-model="form.grade" 
+                v-model="form.degree" 
                 outlined
                 :rules="[rules.required, rules.grade]"
               /> 
@@ -99,14 +99,14 @@ export default {
   data() {
     return {
       form: {
-        name: '',
+        first_name: '',
         email: '',
         identity: '',
         phone: '',
-        lastName: '',
+        last_name: '',
         age: null,
         address: '',
-        grade: '',
+        degree: '',
         gender: ''
       } as StudentForm,
       valid: true,
