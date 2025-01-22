@@ -10,13 +10,15 @@
                 label="Nombre" 
                 v-model="form.first_name" 
                 outlined
+                id="name"
                 :rules="[rules.required, rules.name]" 
                 maxlength="32"
               />
               <v-text-field 
                 label="Email" 
                 type="email" 
-                v-model="form.email" 
+                v-model="form.email"
+                id="email" 
                 outlined
                 :rules="[rules.required, rules.email]"
               /> 
@@ -24,6 +26,7 @@
                 label="Telefono" 
                 v-model="form.phone" 
                 outlined
+                id="phone"
                 :rules="[rules.phone]"
               />
             </v-col>
@@ -32,6 +35,7 @@
                 label="Apellido" 
                 v-model="form.last_name" 
                 outlined
+                id="lastName"
                 :rules="[rules.required, rules.name]" 
                 maxlength="32"
               />
@@ -40,12 +44,14 @@
                 type="number" 
                 v-model="form.age" 
                 outlined
+                id="age"
                 :rules="[rules.age]"
                 maxlength="2"
               />
               <v-select 
                 label="Genero" 
                 v-model="form.gender" 
+                id="gender"
                 :items="['Masculino', 'Femenino']" 
                 outlined
               />
@@ -55,6 +61,7 @@
                 label="Cedula" 
                 v-model="form.identity" 
                 outlined
+                id="identity"
                 :rules="[rules.required, rules.identity]" 
                 maxlength="9"
               />
@@ -62,12 +69,14 @@
                 label="Curso" 
                 v-model="form.degree" 
                 outlined
+                id="grade"
                 :rules="[rules.required, rules.grade]"
               /> 
               <v-text-field 
                 label="Direccion" 
                 v-model="form.address" 
                 outlined
+                id="address"
                 :rules="[rules.address]"
                 maxlength="50"
               />
