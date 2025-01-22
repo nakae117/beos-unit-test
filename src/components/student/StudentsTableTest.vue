@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container>
-      <v-btn color="primary" @click="openCreate">Crear Estudiante</v-btn>
+      <v-btn id="create-button" color="primary" @click="openCreate">Crear Estudiante</v-btn>
       <v-skeleton-loader
         v-if="loading"
         type="table-heading, list-item-two-line, table-tfoot"
@@ -32,7 +32,7 @@
         </template>
       </v-data-table>
     </v-container>
-    <CreateStudent :value="isOpenModal" @input="val => isOpenModal = val"/>
+    <CreateStudent :value="isOpenModal" @input="val => isOpenModal = $event"/>
     </div>
 </template>
 

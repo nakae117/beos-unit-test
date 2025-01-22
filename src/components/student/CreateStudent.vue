@@ -86,8 +86,8 @@
       </v-card-text>
       <v-card-actions class="d-flex justify-end px-4 py-4">
         <v-spacer/>
-        <v-btn class="mr-4" @click="closeModal">Cerrar</v-btn>
-        <v-btn color="primary" @click="saveStudent">Guardar</v-btn>
+        <v-btn id="close-button" class="mr-4" @click="closeModal">Cerrar</v-btn>
+        <v-btn id="save-button" color="primary" @click="saveStudent">Guardar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -130,6 +130,14 @@ export default {
       set(val: boolean) {
         this.$emit('input', val);
       },
+    },
+  },
+    watch: {
+    value(val) {
+      this.dialog = val;
+    },
+    dialog(val) {
+      this.$emit('input', val);
     },
   },
   methods: {
