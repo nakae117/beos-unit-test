@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 import { mount, createLocalVue } from '@vue/test-utils'
-import CreateStudent from '../CreateStudent.vue'
+import CreateStudent from '@/components/student/CreateStudent.vue'
 
 const localVue = createLocalVue()
 let vuetify: Vuetify
