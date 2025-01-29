@@ -32,7 +32,7 @@
         </template>
       </v-data-table>
     </v-container>
-    <CreateStudent :value="isOpenModal" @input="val => isOpenModal = $event"/>
+    <CreateStudent :value="isOpenModal" @input="handleInput"/>
     </div>
 </template>
 
@@ -101,7 +101,10 @@ export default {
     },
     openCreate(){
       this.isOpenModal = true;
-    }
+    },
+     handleInput(val) {
+      this.isOpenModal = val;
+    },
   }
 };
 </script>
