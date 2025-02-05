@@ -23,7 +23,7 @@
         :server-items-length="total"
         :footer-props="footerProps"
       >
-        <template v-slot:[`item.actions`]="{ item }">
+        <template v-slot:[`item.actions`]="{ item, index }">
           <v-btn icon @click="item.id">
             <v-icon>visibility</v-icon>
           </v-btn>
@@ -35,7 +35,7 @@
           <v-btn
             icon
             :title="`Delete${index}`"
-            @click="item.id"
+            @click="setInfoDelete(item)"
           >
             <v-icon>delete</v-icon>
           </v-btn>
@@ -153,11 +153,11 @@ export default {
       }
     },
 
-    openCreate(){
+    openCreate() {
       this.isOpenModal = true;
     },
 
-    handleInput(val) {
+    handleInput(val: boolean) {
       this.isOpenModal = val;
     },
 
