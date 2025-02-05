@@ -7,10 +7,10 @@
       "jsx": "preserve",
       "moduleResolution": "node",
       "baseUrl": ".",
-      "types": ["node", "jest", "vuetify"],
+      "types": ["node", "jest", "vuetify", "@testing-library/jest-dom"],
       "paths": {
         "@/*": ["src/*"]
-      }
+      },
     },
     "include": [
       "src/**/*.ts",
