@@ -27,24 +27,26 @@
             <v-icon>visibility</v-icon>
           </v-btn>
 
-          <v-btn icon  data-test="edit-button" id="btn-edit" @click="openEditModal(item)">
+          <v-btn
+            icon
+            data-test="edit-button"
+            title="Editar"
+            id="btn-edit"
+            @click="openEditModal(item)"
+          >
             <v-icon>edit</v-icon>
           </v-btn>
 
-          <v-btn
-            icon
-            :title="`Delete${index}`"
-            @click="setInfoDelete(item)"
-          >
+          <v-btn icon :title="`Delete${index}`" @click="setInfoDelete(item)">
             <v-icon>delete</v-icon>
           </v-btn>
         </template>
       </v-data-table>
     </v-container>
 
-    <CreateStudent :value="isOpenModal" @input="handleInput"/>
+    <CreateStudent :value="isOpenModal" @input="handleInput" />
     <UpdateStudent
-    v-if="isEditModalOpen"
+      v-if="isEditModalOpen"
       :value="isEditModalOpen"
       :selected-student="selectedStudent"
       @save="handleSaveStudent"
@@ -58,22 +60,22 @@
       :text-confirm="textConfirm"
       :is-loading="isLoading"
     />
-    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import axios from 'axios';
+import axios from "axios";
 import Vue from "vue";
 import ToastMixin from "@/components/UI/Toast/Toast.vue";
 import Confirmation from "@/components/utils/Confirmation.vue";
-import CreateStudent from './CreateStudent.vue';
-import UpdateStudent from './UpdateStudent.vue';
+import CreateStudent from "./CreateStudent.vue";
+import UpdateStudent from "./UpdateStudent.vue";
 import {
   Header,
   Student,
   PaginationOptions,
   FooterProps,
-  ApiResponse
+  ApiResponse,
 } from "@/Interfaces/students-table";
 
 export default Vue.extend({
@@ -93,10 +95,10 @@ export default Vue.extend({
       loading: false,
       confirmDelete: false,
       headers: [
-        { text: 'First Name', value: 'first_name', sortable: false },
-        { text: 'Last Name', value: 'last_name', sortable: false },
-        { text: 'Age', value: 'age', sortable: false },
-        { text: 'Actions', value: 'actions', width: 140, sortable: false },
+        { text: "First Name", value: "first_name", sortable: false },
+        { text: "Last Name", value: "last_name", sortable: false },
+        { text: "Age", value: "age", sortable: false },
+        { text: "Actions", value: "actions", width: 140, sortable: false },
       ] as Header[],
       students: [
         {
@@ -109,8 +111,8 @@ export default Vue.extend({
           degree: "Dr.",
           phone: "+1 (910) 487-7111",
           created_at: "2025-01-10T13:38:50.000000Z",
-          updated_at: "2025-01-10T13:38:50.000000Z"
-        }
+          updated_at: "2025-01-10T13:38:50.000000Z",
+        },
       ] as Student[],
       options: {
         page: 1,
@@ -129,7 +131,7 @@ export default Vue.extend({
       selectedStudent: null as Student | null, // Estudiante seleccionado
       isOpenModal: false,
       isEditModalOpen: false, // Estado del modal de edición
-      detailStudent: {} as Partial<Student>
+      detailStudent: {} as Partial<Student>,
     };
   },
 
@@ -138,7 +140,7 @@ export default Vue.extend({
       handler() {
         // this.getStudent();
       },
-      deep: true
+      deep: true,
     },
   },
 
@@ -181,9 +183,11 @@ export default Vue.extend({
     },
 
     handleSaveStudent(updatedStudent: Student): void {
-      const index = this.students.findIndex((s:Student) => s.id === updatedStudent.id);
+      const index = this.students.findIndex(
+        (s: Student) => s.id === updatedStudent.id
+      );
       if (index !== -1) {
-        this.students[index] = { ...updatedStudent };
+        this.$set(this.students, index, { ...updatedStudent }); // Forzar reactividad
       }
       this.isEditModalOpen = false;
     },
@@ -213,7 +217,7 @@ export default Vue.extend({
       const name = item.first_name;
       const last = item.last_name;
       const email = item.email;
-      
+
       const info = `${name} ${last}, Email: ${email}`;
       this.message = `Are you sure you want to delete ${info}?`;
 
@@ -223,7 +227,7 @@ export default Vue.extend({
     async deleteStudent(): Promise<void> {
       this.isLoading = true;
 
-      const fullName = `${this.detailStudent.first_name} ${this.detailStudent.last_name}`
+      const fullName = `${this.detailStudent.first_name} ${this.detailStudent.last_name}`;
       const message = `The record of ${fullName} has been deleted successfully`;
       this.showToast({ title: "", message, type: "success" });
       this.isLoading = false;
@@ -246,6 +250,5 @@ export default Vue.extend({
         }); */
     },
   },
-
 });
 </script>

@@ -111,7 +111,7 @@ describe('StudentTable.vue - Editar Estudiante', () => {
         expect(editStudentComponent.exists()).toBe(true);
     });
 
-    describe('Validación de campos', () => {
+    describe('Validación de Formulario', () => {
         let editStudentComponent: any;
 
 
@@ -239,7 +239,7 @@ describe('StudentTable.vue - Editar Estudiante', () => {
             editStudentComponent = wrapper.findComponent(EditStudent);
         });
 
-        it('guarda los cambios y cierra el modal', async () => {
+        it('Guarda los cambios y cierra el modal', async () => {
             // Simular cambios en el formulario
             await editStudentComponent.setData({
                 formStudent: {
