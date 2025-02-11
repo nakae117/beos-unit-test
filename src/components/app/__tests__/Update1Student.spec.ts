@@ -9,17 +9,17 @@ const localVue = createLocalVue();
 Vue.use(Vuetify);
 
 //Definimos las interfaces de los componentes
-interface EditStudentComponentType extends Vue {
-    formStudent: Student;
-    $refs: {
-        form: Vue & {
-            validate: () => boolean;
-        };
-    };
-    $data: {
-        formStudent: Student;
-    };
-}
+// interface EditStudentComponentType extends Vue {
+//     formStudent: Student;
+//     $refs: {
+//         form: Vue & {
+//             validate: () => boolean;
+//         };
+//     };
+//     $data: {
+//         formStudent: Student;
+//     };
+// }
 
 interface StudentTableType extends Vue {
     isEditModalOpen: boolean;
@@ -107,17 +107,17 @@ describe('StudentTable.vue - Editar Estudiante', () => {
 
     it('Renderiza el componente de edición cuando el modal está abierto', async () => {
         await wrapper.setData({ isEditModalOpen: true, selectedStudent: mockStudent });
-        const editStudentComponent = wrapper.findComponent(EditStudent) as Wrapper<EditStudentComponentType>; // para los compoenntes hijos se usa el type inserccion, no se usa el VueClass
+        const editStudentComponent = wrapper.findComponent(EditStudent); // para los compoenntes hijos se usa el type inserccion, no se usa el VueClass
         expect(editStudentComponent.exists()).toBe(true);
     });
 
     describe('Validación de campos', () => {
-        let editStudentComponent: Wrapper<EditStudentComponentType>;
+        let editStudentComponent: any;
 
 
         beforeEach(async () => {
             await wrapper.setData({ isEditModalOpen: true, selectedStudent: mockStudent });
-            editStudentComponent = wrapper.findComponent(EditStudent) as Wrapper<EditStudentComponentType>;
+            editStudentComponent = wrapper.findComponent(EditStudent);
         });
 
         it('Valida el campo nombre', async () => {
@@ -232,11 +232,11 @@ describe('StudentTable.vue - Editar Estudiante', () => {
         });
     });
     describe('Guardar cambios', () => {
-        let editStudentComponent: Wrapper<EditStudentComponentType>;
+        let editStudentComponent:any;
 
         beforeEach(async () => {
             await wrapper.setData({ isEditModalOpen: true, selectedStudent: mockStudent });
-            editStudentComponent = wrapper.findComponent(EditStudent) as Wrapper<EditStudentComponentType>;
+            editStudentComponent = wrapper.findComponent(EditStudent);
         });
 
         it('guarda los cambios y cierra el modal', async () => {
@@ -275,7 +275,7 @@ describe('StudentTable.vue - Editar Estudiante', () => {
             await Vue.nextTick();
 
             // Verificar que el estudiante seleccionado es el correcto
-            const editStudentComponent = wrapper.findComponent(EditStudent) as Wrapper<EditStudentComponentType>;
+            const editStudentComponent = wrapper.findComponent(EditStudent);
             expect(editStudentComponent.exists()).toBe(true);
             expect(editStudentComponent.props('selectedStudent')).toEqual(mockStudents[0]);
 
@@ -320,7 +320,7 @@ describe('StudentTable.vue - Editar Estudiante', () => {
             });
             await Vue.nextTick();
 
-            const editStudentComponent = wrapper.findComponent(EditStudent) as Wrapper<EditStudentComponentType>;
+            const editStudentComponent = wrapper.findComponent(EditStudent);
             const updatedStudent = {
                 ...mockStudents[0],
                 first_name: 'Yetsimar Modified'
