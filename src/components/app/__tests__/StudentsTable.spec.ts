@@ -1,59 +1,54 @@
-import { mount, Wrapper } from '@vue/test-utils';
-import StudentTable from '@/components/StudentTable.vue';
-// import axios from 'axios';
-import Vue from 'vue';
-
-jest.mock('axios');
-// const mockedAxios = axios as jest.Mocked<typeof axios>;
+import { shallowMount } from '@vue/test-utils';
+import StudentTable from '@/components/student/StudentTable.vue';
 
 describe('StudentTable.vue', () => {
-  let wrapper: Wrapper<Vue>;
+  let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(StudentTable);
+    wrapper = shallowMount(StudentTable, {
+      data() {
+        return {
+          loading: false,
+          students: [],
+          search: '',
+          options: {
+            search: '',
+            page: 1,
+            sort_by: 'id',
+            sort_desc: 'asc',
+            per_page: 20,
+          },
+        };
+      },
+    });
   });
 
-  it('debe filtrar la tabla al escribir en el input de búsqueda', async () => {
-    const searchInput = wrapper.find('input');
-    await searchInput.setValue('John');
-
-    expect(wrapper.vm.$data.filteredStudents).toEqual(expect.arrayContaining([/* estudiantes filtrados */]));
+  it('renders a skeleton loader when loading', () => {
+    wrapper.setData({ loading: true });
+    expect(wrapper.findComponent({ name: 'VSkeletonLoader' }).exists()).toBe(true);
   });
 
-  it('no debe permitir caracteres especiales en el input de búsqueda', async () => {
-    const searchInput = wrapper.find('input');
-    await searchInput.setValue('John$%^&');
-
-    expect(wrapper.vm.$data.searchQuery).not.toMatch(/[！＃＄％＆＊，．：；？＠、。〃〝〞︰~|\\/]/);
+  it('renders student data when not loading', () => {
+    wrapper.setData({
+      loading: false,
+      students: [
+        { id: 1, first_name: 'John', last_name: 'Doe', age: 20 },
+        { id: 2, first_name: 'Jane', last_name: 'Smith', age: 22 },
+      ],
+    });
+    expect(wrapper.findAll('tbody tr').length).toBe(2);
   });
 
-  it('debe mostrar un error al pegar caracteres especiales', async () => {
-    const searchInput = wrapper.find('input');
-    await searchInput.setValue('John$%^&');
-    const errorMessage = wrapper.find('.error-message');
-
-    expect(errorMessage.exists()).toBe(true);
+  it('updates search term correctly', () => {
+    wrapper.setData({ search: 'John' });
+    wrapper.vm.searchStudent();
+    expect(wrapper.vm.options.search).toBe('John');
   });
 
-  it('debe hacer una llamada al servidor correctamente', async () => {
-    // mockedAxios.get.mockResolvedValue({ data: [] });
-
-    // await wrapper.vm.$data.fetchData();
-    // expect(mockedAxios.get).toHaveBeenCalledWith('/student');
-    // expect(mockedAxios.get).toHaveBeenCalledTimes(1);
-  });
-
-  it('debe refrescar la vista correctamente', async () => {
-    await Vue.nextTick();
-    expect(wrapper.html()).toMatchSnapshot();
-  });
-
-  it('la búsqueda debe ser en tiempo real', async () => {
-    const start = Date.now();
-    const searchInput = wrapper.find('input');
-    await searchInput.setValue('John');
-
-    const end = Date.now();
-    expect(end - start).toBeLessThan(1000);
+  it('calls searchStudent method when search icon is clicked', async () => {
+    wrapper.setData({ search: 'John' });
+    wrapper.find('input').trigger('click:append');
+    await wrapper.vm.$nextTick();
+    expect(wrapper.vm.options.search).toBe('John');
   });
 });

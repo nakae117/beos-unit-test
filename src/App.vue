@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import HelloWorld from '@/components/HelloWorld.vue';
-import StudentsTable from '@/components/student/StudentsTableTest.vue';
+import StudentsTable from '@/components/student/StudentTable.vue';
 
 export default {
   name: 'App',
