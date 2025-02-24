@@ -174,8 +174,8 @@ export default Vue.extend({
       try {
         const resp = await getStudent();
         console.log("RESP", resp);
-        /* this.students = resp.data.data;
-        this.total = resp.data.total; */
+        this.students = resp.data;
+        this.total = resp.total;
       } catch (error) {
         console.error("Error making request:", error);
       } finally {

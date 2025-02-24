@@ -1,9 +1,10 @@
+import { StudentResponse } from '@/Interfaces/students-table';
 import axios from 'axios';
 
-export const getStudent = async (): Promise<void> => {
+export const getStudent = async (): Promise<StudentResponse> => {
     try {
       console.log("Realizando GET /students con Axios...");
-      const response = await axios.get('/students');
+      const response = await axios.get<StudentResponse>('/students');
       console.log("Respuesta de MSW con Axios:", response.data);
       return response.data;
     } catch (error) {
