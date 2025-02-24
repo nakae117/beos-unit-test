@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
+    "test:unit-details": "vue-cli-service test:unit --verbose",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -18,6 +19,8 @@
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/vue": "^5.9.0",
     "@types/node": "^22.10.1",
     "@types/vue": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
