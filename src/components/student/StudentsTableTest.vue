@@ -6,6 +6,9 @@
       <v-btn id="create-button" color="primary" @click="openCreate">
         Crear Estudiante
       </v-btn>
+      <v-btn  color="primary" class="ml-2" @click="chargeStudent">
+        Actualizar
+      </v-btn>
 
       <v-skeleton-loader
         v-if="loading"
@@ -163,9 +166,9 @@ export default Vue.extend({
     },
   },
 
-  mounted() {
-    this.chargeStudent();
-  },
+  // created() {
+  //   this.chargeStudent();
+  // },
 
   methods: {
     async chargeStudent(): Promise<void> {

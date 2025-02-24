@@ -2,13 +2,14 @@ import axios from 'axios';
 
 export const getStudent = async (): Promise<void> => {
     try {
-        const response = await axios.get("/students", { withCredentials: true });
-        console.log("Respuesta de MSW:", response.data);
-        return response.data;
+      console.log("Realizando GET /students con Axios...");
+      const response = await axios.get('/students');
+      console.log("Respuesta de MSW con Axios:", response.data);
+      return response.data;
     } catch (error) {
-        throw new Error('Error al traer los estudiantes');
+      console.error('Error al traer los estudiantes con Axios:', error);
     }
-};
+  };
 
 export const deleteStudent = async (id: number): Promise<void> => {
     try {
