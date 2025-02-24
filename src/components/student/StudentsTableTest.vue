@@ -27,7 +27,13 @@
             <v-icon>visibility</v-icon>
           </v-btn>
 
-          <v-btn icon @click="item.id">
+          <v-btn
+            icon
+            data-test="edit-button"
+            title="Editar"
+            id="btn-edit"
+            @click="openEditModal(item)"
+          >
             <v-icon>edit</v-icon>
           </v-btn>
 
