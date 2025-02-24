@@ -101,8 +101,7 @@ export default {
         this.total = resp.data.total;
         this.loading = false;
       })
-      .catch((error) => {
-        console.error("Error making request:", error);
+      .catch(() => {
         this.loading = false;
       });
     }

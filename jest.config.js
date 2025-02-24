@@ -10,4 +10,5 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1', // Esto asegura que el alias @ funcione en Jest
   },
   transformIgnorePatterns: ["/node_modules/(?!(axios)/)"],
+  testEnvironment: 'jsdom',
 };
