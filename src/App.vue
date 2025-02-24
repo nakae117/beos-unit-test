@@ -1,10 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
+    <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
         <v-img
           alt="Vuetify Logo"
@@ -29,26 +25,29 @@
     </v-app-bar>
 
     <v-main>
-      <HelloWorld msg="Botón de pruebas"/>
+      <HelloWorld msg="Botón de pruebas" />
 
       <StudentsTable />
+      <SubjectTable />
     </v-main>
   </v-app>
 </template>
 
 <script lang="ts">
-import HelloWorld from '@/components/HelloWorld.vue';
-import StudentsTable from '@/components/student/StudentsTableTest.vue';
+import HelloWorld from "@/components/HelloWorld.vue";
+import StudentsTable from "@/components/student/StudentsTableTest.vue";
+import SubjectTable from "./components/subject/SubjectTable.vue";
 
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
     HelloWorld,
     StudentsTable,
+    SubjectTable,
   },
 
-  data: () =>  ({
+  data: () => ({
     //
   }),
 };
