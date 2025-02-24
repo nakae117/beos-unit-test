@@ -28,13 +28,13 @@
           </v-btn>
 
           <v-btn
-            id="btn-edit"
             icon
-            title="Editar"
             data-test="edit-button"
+            title="Editar"
+            id="btn-edit"
             @click="openEditModal(item)"
           >
-            <v-icon> edit </v-icon>
+            <v-icon>edit</v-icon>
           </v-btn>
 
           <v-btn
