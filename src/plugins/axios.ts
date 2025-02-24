@@ -2,7 +2,7 @@ import axios from "axios";
 import Vue from "vue";
 
 
-const baseURL = "http://localhost/api/v1/";
+const baseURL = "http://localhost/";
 
 axios.defaults.headers.common = {
 	Accept: "application/json",

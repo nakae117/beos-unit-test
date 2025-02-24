@@ -22,29 +22,34 @@
         :server-items-length="total"
         :footer-props="footerProps"
       >
-        <template v-slot:[`item.actions`]="{ item }">
+        <template v-slot:[`item.actions`]="{ item, index }">
           <v-btn icon @click="viewStudent(item)">
-            <v-icon>visibility</v-icon>
+            <v-icon> visibility </v-icon>
+          </v-btn>
+
+          <v-btn
+            id="btn-edit"
+            icon
+            title="Editar"
+            data-test="edit-button"
+            @click="openEditModal(item)"
+          >
+            <v-icon> edit </v-icon>
           </v-btn>
 
           <v-btn
             icon
-            data-test="edit-button"
-            title="Editar"
-            id="btn-edit"
-            @click="openEditModal(item)"
+            :title="`Delete${index}`"
+            @click="setInfoDelete(item)"
           >
-            <v-icon>edit</v-icon>
-          </v-btn>
-
-          <v-btn icon :title="`Delete${index}`" @click="setInfoDelete(item)">
-            <v-icon>delete</v-icon>
+            <v-icon> delete </v-icon>
           </v-btn>
         </template>
       </v-data-table>
     </v-container>
 
     <CreateStudent :value="isOpenModal" @input="handleInput" />
+
     <UpdateStudent
       v-if="isEditModalOpen"
       :value="isEditModalOpen"
@@ -52,6 +57,7 @@
       @save="handleSaveStudent"
       @close="closeEditModal"
     />
+    
     <Confirmation
       v-model="confirmDelete"
       :confirm-action="deleteStudent"
@@ -64,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import axios from "axios";
+// import axios from "axios";
 import Vue from "vue";
 import ToastMixin from "@/components/UI/Toast/Toast.vue";
 import Confirmation from "@/components/utils/Confirmation.vue";
@@ -75,8 +81,9 @@ import {
   Student,
   PaginationOptions,
   FooterProps,
-  ApiResponse,
+  // ApiResponse,
 } from "@/Interfaces/students-table";
+import { getStudent, deleteStudent } from "@/services/studentService";
 
 export default Vue.extend({
   name: "StudentTable",
@@ -101,7 +108,7 @@ export default Vue.extend({
         { text: "Actions", value: "actions", width: 140, sortable: false },
       ] as Header[],
       students: [
-        {
+        /* {
           id: 1,
           first_name: "David",
           last_name: "Williams",
@@ -112,7 +119,7 @@ export default Vue.extend({
           phone: "+1 (910) 487-7111",
           created_at: "2025-01-10T13:38:50.000000Z",
           updated_at: "2025-01-10T13:38:50.000000Z",
-        },
+        }, */
       ] as Student[],
       options: {
         page: 1,
@@ -128,9 +135,9 @@ export default Vue.extend({
       title: "",
       message: "",
       textConfirm: "",
-      selectedStudent: null as Student | null, // Estudiante seleccionado
+      selectedStudent: null as Student | null,
       isOpenModal: false,
-      isEditModalOpen: false, // Estado del modal de edición
+      isEditModalOpen: false,
       detailStudent: {} as Partial<Student>,
     };
   },
@@ -138,21 +145,32 @@ export default Vue.extend({
   watch: {
     options: {
       handler() {
-        // this.getStudent();
+        this.chargeStudent();
       },
       deep: true,
     },
   },
 
   mounted() {
-    // this.getStudent();
+    this.chargeStudent();
   },
 
   methods: {
-    async getStudent(): Promise<void> {
+    async chargeStudent(): Promise<void> {
       this.loading = true;
 
       try {
+        const resp = await getStudent();
+        console.log("RESP", resp);
+        /* this.students = resp.data.data;
+        this.total = resp.data.total; */
+      } catch (error) {
+        console.error("Error making request:", error);
+      } finally {
+        this.loading = false;
+      }
+
+      /* try {
         const resp = await axios.get<ApiResponse<Student>>("/student", {
           params: this.options,
         });
@@ -162,17 +180,18 @@ export default Vue.extend({
         console.error("Error making request:", error);
       } finally {
         this.loading = false;
-      }
+      } */
     },
 
     openCreate() {
       this.isOpenModal = true;
     },
+
     openEditModal(student: Student) {
-      // console.log(student)
       this.selectedStudent = { ...student };
       this.isEditModalOpen = true;
     },
+
     viewStudent(student: Student) {
       console.log("Viewing student:", student);
     },
@@ -187,24 +206,11 @@ export default Vue.extend({
         (s: Student) => s.id === updatedStudent.id
       );
       if (index !== -1) {
-        this.$set(this.students, index, { ...updatedStudent }); // Forzar reactividad
+        this.$set(this.students, index, { ...updatedStudent });
       }
       this.isEditModalOpen = false;
     },
-    async getStudents() {
-      this.loading = true;
-      try {
-        const response = await axios.get("/student", {
-          params: this.options,
-        });
-        this.students = response.data.data;
-        this.total = response.data.total;
-      } catch (error) {
-        console.error("Error fetching students:", error);
-      } finally {
-        this.loading = false;
-      }
-    },
+
     handleInput(val: boolean) {
       this.isOpenModal = val;
     },
@@ -227,11 +233,20 @@ export default Vue.extend({
     async deleteStudent(): Promise<void> {
       this.isLoading = true;
 
-      const fullName = `${this.detailStudent.first_name} ${this.detailStudent.last_name}`;
-      const message = `The record of ${fullName} has been deleted successfully`;
-      this.showToast({ title: "", message, type: "success" });
-      this.isLoading = false;
-      this.confirmDelete = false;
+      try {
+        const id = this.detailStudent.id;
+        await deleteStudent(id);
+
+        const fullName = `${this.detailStudent.first_name} ${this.detailStudent.last_name}`;
+        const message = `The record of ${fullName} has been deleted successfully`;
+        this.showToast({ title: "", message, type: "success" });
+        this.isLoading = false;
+        this.students = this.students.filter((student: Student) => student.id !== id);
+        this.confirmDelete = false
+        
+      } catch (error) {
+        console.error('Error deleting student:', error);
+      }
 
       /* await axios.delete(`/student/delete/${this.detailStudent.id}`)
         .then(() => {

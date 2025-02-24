@@ -14,8 +14,11 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1', // Esto asegura que el alias @ funcione en Jest
   },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'], // Configura Vuetify y otros ajustes antes de las pruebas
-  globals: {
+  setupFilesAfterEnv: [
+    '<rootDir>/jest.setup.ts', // Configura Vuetify y otros ajustes antes de las pruebas
+    '<rootDir>/tests/setup.ts',
+  ],
+    globals: {
     "ts-jest": {
       babelConfig: true,
     },

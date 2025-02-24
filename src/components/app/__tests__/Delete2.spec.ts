@@ -4,26 +4,23 @@ import StudentsTableTest from '@/components/student/StudentsTableTest.vue';
 import '@testing-library/jest-dom';
 import Vuetify from 'vuetify';
 import Toast from 'vue-toastification';
-
-
-// npm install --save-dev
-  // @testing-library/vue
-  // @testing-library/jest-dom
-  // jest
-  // vue-jest
-  // ts-jest
-  // @types/jest
-  // @vue/test-utils
-
-// npm install --save-dev @testing-library/vue@5
-// npm install --save-dev @testing-library/jest-dom
+import { server } from '@/mocks/server';
 
 let vuetify: Vuetify;
 
 Vue.use(Vuetify);
 Vue.use(Toast);
 
-describe('ExampleComponent', () => {
+describe('StudentsTableTest', () => {
+  // Iniciar el servidor de MSW antes de todas las pruebas
+  beforeAll(() => server.listen());
+
+  // Reiniciar los manejadores después de cada prueba
+  afterEach(() => server.resetHandlers());
+
+  // Cerrar el servidor después de todas las pruebas
+  afterAll(() => server.close());
+
   beforeEach(() => {
     vuetify = new Vuetify();
 
@@ -38,7 +35,7 @@ describe('ExampleComponent', () => {
     document.body.innerHTML = '';
   });
 
-  it('renders correctly', async () => {
+  it('Delete student correctly', async () => {
     render(StudentsTableTest, {
       vuetify,
     });
