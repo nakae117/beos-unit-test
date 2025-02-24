@@ -22,18 +22,12 @@
         :server-items-length="total"
         :footer-props="footerProps"
       >
-        <template v-slot:[`item.actions`]="{ item }">
-          <v-btn icon @click="viewStudent(item)">
+        <template v-slot:[`item.actions`]="{ item, index }">
+          <v-btn icon @click="showInfo(item)">
             <v-icon>visibility</v-icon>
           </v-btn>
 
-          <v-btn
-            icon
-            data-test="edit-button"
-            title="Editar"
-            id="btn-edit"
-            @click="openEditModal(item)"
-          >
+          <v-btn icon @click="item.id">
             <v-icon>edit</v-icon>
           </v-btn>
 
@@ -60,16 +54,25 @@
       :text-confirm="textConfirm"
       :is-loading="isLoading"
     />
+
+    <DetailsModal
+      v-model="showDetails"
+      :confirm-action="deleteStudent"
+      title="Info"
+      :data="details"
+      width="500px"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import axios from "axios";
 import Vue from "vue";
-import ToastMixin from "@/components/UI/Toast/Toast.vue";
-import Confirmation from "@/components/utils/Confirmation.vue";
 import CreateStudent from "./CreateStudent.vue";
 import UpdateStudent from "./UpdateStudent.vue";
+import ToastMixin from "@/components/UI/Toast/Toast.vue";
+import Confirmation from "@/components/utils/Confirmation.vue";
+import DetailsModal from "@/components/utils/DetailsModal.vue";
 import {
   Header,
   Student,
@@ -85,6 +88,7 @@ export default Vue.extend({
     CreateStudent,
     UpdateStudent,
     Confirmation,
+    DetailsModal,
   },
 
   mixins: [ToastMixin],
@@ -94,6 +98,8 @@ export default Vue.extend({
       isLoading: false,
       loading: false,
       confirmDelete: false,
+      showDetails: false,
+      details: {}  as Student,
       headers: [
         { text: "First Name", value: "first_name", sortable: false },
         { text: "Last Name", value: "last_name", sortable: false },
@@ -164,7 +170,10 @@ export default Vue.extend({
         this.loading = false;
       }
     },
-
+    showInfo(data: Student) {
+      this.showDetails = true;
+      this.details = { ...data };
+    },
     openCreate() {
       this.isOpenModal = true;
     },
