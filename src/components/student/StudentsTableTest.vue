@@ -173,7 +173,6 @@ export default Vue.extend({
 
       try {
         const resp = await getStudent();
-        console.log("RESP", resp);
         this.students = resp.data;
         this.total = resp.total;
       } catch (error) {
@@ -194,10 +193,12 @@ export default Vue.extend({
         this.loading = false;
       } */
     },
+
     showInfo(data: Student) {
       this.showDetails = true;
       this.details = { ...data };
     },
+
     openCreate() {
       this.isOpenModal = true;
     },
