@@ -10,14 +10,17 @@ import { worker } from "./mocks/browser";
 Vue.config.productionTip = false
 Vue.use(Toast);
 
-// Inicia MSW solo en desarrollo
-console.log('NODE ENV', process.env.NODE_ENV);
-if (process.env.NODE_ENV === 'development') {
-  console.log('[MSW] Mocking enabled. Starting worker...');
-  worker.start({ onUnhandledRequest: 'warn' });
+
+async function initApp() {
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[MSW] Mocking enabled. Starting worker...');
+    await worker.start({ onUnhandledRequest: 'warn' }); // ⏳ Esperamos a que MSW esté listo
+  }
+
+  new Vue({
+    vuetify,
+    render: h => h(App)
+  }).$mount('#app')
 }
 
-new Vue({
-  vuetify,
-  render: h => h(App)
-}).$mount('#app')
+initApp();
