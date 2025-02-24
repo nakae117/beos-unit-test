@@ -11,7 +11,7 @@
         v-if="loading"
         type="table-heading, list-item-two-line, table-tfoot"
       />
-  
+
       <v-data-table
         v-else
         title="tableDelete"
@@ -24,7 +24,7 @@
         :footer-props="footerProps"
       >
         <template v-slot:[`item.actions`]="{ item, index }">
-          <v-btn icon @click="item.id">
+          <v-btn icon @click="showInfo(item)">
             <v-icon>visibility</v-icon>
           </v-btn>
 
@@ -32,18 +32,14 @@
             <v-icon>edit</v-icon>
           </v-btn>
 
-          <v-btn
-            icon
-            :title="`Delete${index}`"
-            @click="setInfoDelete(item)"
-          >
+          <v-btn icon :title="`Delete${index}`" @click="setInfoDelete(item)">
             <v-icon>delete</v-icon>
           </v-btn>
         </template>
       </v-data-table>
     </v-container>
 
-    <CreateStudent :value="isOpenModal" @input="handleInput"/>
+    <CreateStudent :value="isOpenModal" @input="handleInput" />
 
     <Confirmation
       v-model="confirmDelete"
@@ -53,20 +49,29 @@
       :text-confirm="textConfirm"
       :is-loading="isLoading"
     />
-    </div>
+
+    <DetailsModal
+      v-model="showDetails"
+      :confirm-action="deleteStudent"
+      title="Info"
+      :data="details"
+      width="500px"
+    />
+  </div>
 </template>
 
 <script lang="ts">
-import axios from 'axios';
+import axios from "axios";
 import ToastMixin from "@/components/UI/Toast/Toast.vue";
 import Confirmation from "@/components/utils/Confirmation.vue";
-import CreateStudent from './CreateStudent.vue';
+import CreateStudent from "./CreateStudent.vue";
+import DetailsModal from "@/components/utils/DetailsModal.vue";
 import {
   Header,
   Student,
   PaginationOptions,
   FooterProps,
-  ApiResponse
+  ApiResponse,
 } from "@/Interfaces/students-table";
 
 export default {
@@ -75,6 +80,7 @@ export default {
   components: {
     CreateStudent,
     Confirmation,
+    DetailsModal,
   },
 
   mixins: [ToastMixin],
@@ -84,11 +90,13 @@ export default {
       isLoading: false,
       loading: false,
       confirmDelete: false,
+      showDetails: false,
+      details: {},
       headers: [
-        { text: 'First Name', value: 'first_name', sortable: false },
-        { text: 'Last Name', value: 'last_name', sortable: false },
-        { text: 'Age', value: 'age', sortable: false },
-        { text: 'Actions', value: 'actions', width: 140, sortable: false },
+        { text: "First Name", value: "first_name", sortable: false },
+        { text: "Last Name", value: "last_name", sortable: false },
+        { text: "Age", value: "age", sortable: false },
+        { text: "Actions", value: "actions", width: 140, sortable: false },
       ] as Header[],
       students: [
         {
@@ -101,13 +109,13 @@ export default {
           degree: "Dr.",
           phone: "+1 (910) 487-7111",
           created_at: "2025-01-10T13:38:50.000000Z",
-          updated_at: "2025-01-10T13:38:50.000000Z"
-        }
+          updated_at: "2025-01-10T13:38:50.000000Z",
+        },
       ] as Student[],
       options: {
         page: 1,
-        sort_by: 'id',
-        sort_desc: 'asc',
+        sort_by: "id",
+        sort_desc: "asc",
         per_page: 20,
       } as PaginationOptions,
       total: 1,
@@ -119,7 +127,7 @@ export default {
       title: "",
       message: "",
       textConfirm: "",
-      detailStudent: {} as Partial<Student>
+      detailStudent: {} as Partial<Student>,
     };
   },
 
@@ -128,7 +136,7 @@ export default {
       handler() {
         // this.getStudent();
       },
-      deep: true
+      deep: true,
     },
   },
 
@@ -152,7 +160,10 @@ export default {
         this.loading = false;
       }
     },
-
+    showInfo(data: Student) {
+      this.showDetails = true;
+      this.details = { ...data };
+    },
     openCreate() {
       this.isOpenModal = true;
     },
@@ -169,7 +180,7 @@ export default {
       const name = item.first_name;
       const last = item.last_name;
       const email = item.email;
-      
+
       const info = `${name} ${last}, Email: ${email}`;
       this.message = `Are you sure you want to delete ${info}?`;
 
@@ -179,7 +190,7 @@ export default {
     async deleteStudent(): Promise<void> {
       this.isLoading = true;
 
-      const fullName = `${this.detailStudent.first_name} ${this.detailStudent.last_name}`
+      const fullName = `${this.detailStudent.first_name} ${this.detailStudent.last_name}`;
       const message = `The record of ${fullName} has been deleted successfully`;
       this.showToast({ title: "", message, type: "success" });
       this.isLoading = false;
@@ -201,6 +212,6 @@ export default {
           this.isLoading = false;
         }); */
     },
-  }
+  },
 };
 </script>
