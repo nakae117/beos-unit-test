@@ -46,7 +46,7 @@
 import CreateStudent from "./CreateSubject.vue";
 import {
   Header,
-  Subject,
+  //Subject,
   PaginationOptions,
   FooterProps,
 } from "@/Interfaces/subjects";
