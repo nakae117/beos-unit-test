@@ -12,7 +12,8 @@ module.exports = {
     '^.+\\.vue$': '@vue/vue2-jest',  // Para procesar archivos Vue
     '^.+\\.ts$': 'ts-jest',  // Para procesar archivos TypeScript
     '^.+\\.js$': 'babel-jest',
-    "^.+\\.tsx?$": "babel-jest",
+    // "^.+\\.tsx?$": "babel-jest",
+    '^.+\\.tsx?$': ['ts-jest', { babelConfig: true}]
   },
   transformIgnorePatterns: [
     '/node_modules/(?!axios)' // Asegúrate de que Jest transpile axios
@@ -24,11 +25,11 @@ module.exports = {
     '<rootDir>/jest.setup.ts', // Configura Vuetify y otros ajustes antes de las pruebas
     '<rootDir>/tests/setup.ts',
   ],
-    globals: {
-    "ts-jest": {
-      babelConfig: true,
-    },
-  },
+    // globals: {
+    // "ts-jest": {
+    //   babelConfig: true,
+    // },
+  // },
   testMatch: ['**/__tests__/**/*.spec.[jt]s?(x)'],
   // setupFilesAfterEnv: ['<rootDir>/jest.config.js'],
 };
