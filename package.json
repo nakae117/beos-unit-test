@@ -5,8 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
-    "test:unit-details": "vue-cli-service test:unit --verbose",
+    "test:unit": "vue-cli-service jest",
+    "test:unit-details": "vue-cli-service jest --verbose",
     "lint": "vue-cli-service lint",
     "clean": "rm -rf node_modules package-lock.json dist"
   },
