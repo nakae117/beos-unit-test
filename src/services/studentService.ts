@@ -3,9 +3,9 @@ import axios from 'axios';
 
 export const getStudent = async (): Promise<StudentResponse> => {
     try {
-      console.log("Realizando GET /students con Axios...");
+      // console.log("Realizando GET /students con Axios...");
       const response = await axios.get<StudentResponse>('/students');
-      console.log("Respuesta de MSW con Axios:", response.data);
+      // console.log("Respuesta de MSW con Axios:", response.data);
       return response.data;
     } catch (error) {
       console.error('Error al traer los estudiantes con Axios:', error);

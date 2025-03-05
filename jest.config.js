@@ -1,7 +1,13 @@
 module.exports = {
-  preset: "@vue/cli-plugin-unit-jest",
-  testEnvironment: 'jsdom',
+  // preset: "@vue/cli-plugin-unit-jest",
+  // testEnvironment: 'node',
+  testEnvironment: 'jest-fixed-jsdom',
+  testEnvironmentOptions: { 
+    url: "http://localhost/", 
+    customExportConditions: ["node", "node-addons"]
+  },
   moduleFileExtensions: ['js', 'jsx', 'json', 'vue', 'ts', 'tsx'],
+  // setupFiles: ['./jest.environment.js'],
   transform: {
     '^.+\\.vue$': '@vue/vue2-jest',  // Para procesar archivos Vue
     '^.+\\.ts$': 'ts-jest',  // Para procesar archivos TypeScript
