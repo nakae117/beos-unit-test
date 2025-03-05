@@ -13,8 +13,7 @@ Vue.use(Toast);
 
 async function initApp() {
   if (process.env.NODE_ENV === 'development') {
-    console.log('[MSW] Mocking enabled. Starting worker...');
-    await worker.start({ onUnhandledRequest: 'warn' }); // ⏳ Esperamos a que MSW esté listo
+    await worker.start({ onUnhandledRequest: 'warn' });
   }
 
   new Vue({

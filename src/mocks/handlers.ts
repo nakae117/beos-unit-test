@@ -3,7 +3,6 @@ import { http, HttpResponse } from 'msw';
 export const handlers = [
   // Manejador para la solicitud GET /student
   http.get('/students', async () => {
-    console.log('Intercepted GET /api/students');
     try {
       // Simula una respuesta exitosa con datos
       return HttpResponse.json({
