@@ -1,85 +1,128 @@
 import Vue from 'vue';
 import { render, fireEvent, screen, within, waitFor } from '@testing-library/vue';
-import StudentsTableTest from '@/components/student/StudentsTableTest.vue';
 import '@testing-library/jest-dom';
 import Vuetify from 'vuetify';
 import Toast from 'vue-toastification';
 import { server } from '@/mocks/server';
-
-let vuetify: Vuetify;
+import StudentTable from '@/components/student/StudentsTableTest.vue';
+import Confirmation from "@/components/utils/Confirmation.vue";
+import { Student } from '@/Interfaces/Student.interface';
 
 Vue.use(Vuetify);
 Vue.use(Toast);
 
 describe('StudentsTableTest', () => {
-  // Iniciar el servidor de MSW antes de todas las pruebas
   beforeAll(() => server.listen());
-
-  // Reiniciar los manejadores después de cada prueba
   afterEach(() => server.resetHandlers());
-
-  // Cerrar el servidor después de todas las pruebas
   afterAll(() => server.close());
+  let mockStudents: Student[];
 
   beforeEach(() => {
-    vuetify = new Vuetify();
-
-    // Agregar el contenedor `data-app` al DOM
     const app = document.createElement('div');
     app.setAttribute('data-app', 'true');
     document.body.appendChild(app);
+    mockStudents = [
+      {
+        id: 1,
+        first_name: "David",
+        last_name: "Williams",
+        email: "david@gmail.com",
+        age: "39",
+        gender: "M",
+        degree: "Dr.",
+        phone: "+1 (910) 487-7111",
+        created_at: "2025-01-10T13:38:50.000000Z",
+        updated_at: "2025-01-10T13:38:50.000000Z",
+      }
+    ];
   });
 
+  const renderComponent = () => {
+    const vuetify = new Vuetify();
+    return render(StudentTable, {
+        vuetify,
+        stubs: {
+          Confirmation,
+        },
+        data() {
+            return {
+                confirmDelete: false,
+                students: mockStudents,
+                total: 1,
+                isLoading: false,
+            };
+        },
+    });
+};
+
   afterEach(() => {
-    // Limpiar el DOM después de cada prueba
     document.body.innerHTML = '';
   });
 
-  it('Delete student correctly', async () => {
-    render(StudentsTableTest, {
-      vuetify,
-    });
-
-    // Verificamos que se renderice la tabla correctamente
+  it('Verify that table is rendered', async () => {
+    renderComponent();
     expect(screen.getByText('Rendering Table')).toBeInTheDocument();
+  })
 
-    // Buscamos la tabla por medio del title
-    const table = screen.getByTitle('tableDelete');
+  describe('Delete student correctly', () => {
+    it('Click the delete button of the desired student', async () => {
+      renderComponent();
+      const table = screen.getByTitle('tableDelete');
+      const buttonsFound = within(table).getAllByRole('button');
+      const deleteButton = buttonsFound.find(btn => 
+        btn.getAttribute('title') === 'Delete0'
+      );
 
-    // Buscamos los botones que están dentro de la tabla
-    // Usamos within para restringir la búsqueda unicamente en la tabla
-    const buttonsFound = within(table).getAllByRole('button');
-    
-    // Buscamos el botón en la tabla que tenga de title = "Delete0"
-    // Cero porque es el index del único estudiante que hay
-    const deleteButton = buttonsFound.find(btn => 
-      btn.getAttribute('title') === 'Delete0'
-    );
+      expect(deleteButton).toBeInTheDocument();
 
-    // Verificamos que el btn esté en el DOM
-    expect(deleteButton).toBeInTheDocument();
+      await waitFor(() => {
+        fireEvent.click(deleteButton);
+      });
+    })
 
-    await waitFor(() => {
-      // Simula el click en el botón de delete
-      fireEvent.click(deleteButton);
-    });
+    it('Verify that the confirmation modal is visible', async () => {
+      renderComponent();
+      const table = screen.getByTitle('tableDelete');
+      const buttonsFound = within(table).getAllByRole('button');
+      const deleteButton = buttonsFound.find(btn => 
+        btn.getAttribute('title') === 'Delete0'
+      );
 
-    // Verifica que el modal de confirmación esté visible
-    const text = "Are you sure you want to delete David Williams, Email: david@gmail.com?";
-    expect(screen.queryByText('Confirmation')).toBeInTheDocument();
-    expect(screen.queryByText(text)).toBeInTheDocument();
+      expect(deleteButton).toBeInTheDocument();
 
-    // Ahora buscamos el botón de confirmación que esta en el modal
-    const confirmBtn = screen.getByTitle('confirm-btn');
+      await waitFor(() => {
+        fireEvent.click(deleteButton);
+      });
 
-    await waitFor(() => {
-      // Simula el click en el botón de confirmación
-      fireEvent.click(confirmBtn);
-    });
+      const text = "Are you sure you want to delete David Williams, Email: david@gmail.com?";
+      expect(screen.queryByText('Confirmation')).toBeInTheDocument();
+      expect(screen.queryByText(text)).toBeInTheDocument();
+    })
 
-    // Verificamos que el modal ya no esta preguntando por el texto del mismo
-    expect(screen.queryByText('Confirmation')).not.toBeInTheDocument();
+    it('Confirm delete', async () => {
+      renderComponent();
+      const table = screen.getByTitle('tableDelete');
+      const buttonsFound = within(table).getAllByRole('button');
+      const deleteButton = buttonsFound.find(btn => 
+        btn.getAttribute('title') === 'Delete0'
+      );
 
-    console.log("=============== PRUEBA DELETE testing-library/vue ====================");
+      expect(deleteButton).toBeInTheDocument();
+
+      await waitFor(() => {
+        fireEvent.click(deleteButton);
+      });
+
+      const text = "Are you sure you want to delete David Williams, Email: david@gmail.com?";
+      expect(screen.queryByText('Confirmation')).toBeInTheDocument();
+      expect(screen.queryByText(text)).toBeInTheDocument();
+
+      const confirmBtn = screen.getByTitle('confirm-btn');
+
+      await waitFor(() => {
+        fireEvent.click(confirmBtn);
+        expect(screen.queryByText('Confirmation')).not.toBeInTheDocument();
+      });
+    })
   });
 });

@@ -12,8 +12,12 @@ export const getStudent = async (): Promise<StudentResponse> => {
 
 export const deleteStudent = async (id: number): Promise<void> => {
   try {
-    const response = await axios.delete(`/students/${id}`);
-    return response.data;
+    const response = await fetch(`/students/${id}`, {
+      method: "DELETE"
+    });
+
+    const data = await response.json();
+    return data;
   } catch (error) {
     throw new Error('Error al eliminar el estudiante');
   }

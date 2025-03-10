@@ -1,6 +1,4 @@
 module.exports = {
-  // preset: "@vue/cli-plugin-unit-jest",
-  // testEnvironment: 'node',
   testEnvironment: 'jest-fixed-jsdom',
   testEnvironmentOptions: { 
     url: "http://localhost/", 
@@ -25,11 +23,5 @@ module.exports = {
     '<rootDir>/jest.setup.ts', // Configura Vuetify y otros ajustes antes de las pruebas
     '<rootDir>/tests/setup.ts',
   ],
-    // globals: {
-    // "ts-jest": {
-    //   babelConfig: true,
-    // },
-  // },
   testMatch: ['**/__tests__/**/*.spec.[jt]s?(x)'],
-  // setupFilesAfterEnv: ['<rootDir>/jest.config.js'],
 };

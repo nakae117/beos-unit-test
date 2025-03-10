@@ -7,12 +7,12 @@
         Crear Estudiante
       </v-btn>
 
-      <v-skeleton-loader
+      <!-- <v-skeleton-loader
         v-if="loading"
         type="table-heading, list-item-two-line, table-tfoot"
-      />
+      /> -->
+      
       <v-data-table
-        v-else
         title="tableDelete"
         class="elevation-1"
         :headers="headers"
@@ -120,7 +120,7 @@ export default Vue.extend({
         { text: "Actions", value: "actions", width: 140, sortable: false },
       ] as Header[],
       students: [
-        /* {
+        {
           id: 1,
           first_name: "David",
           last_name: "Williams",
@@ -131,7 +131,7 @@ export default Vue.extend({
           phone: "+1 (910) 487-7111",
           created_at: "2025-01-10T13:38:50.000000Z",
           updated_at: "2025-01-10T13:38:50.000000Z",
-        }, */
+        },
       ] as Student[],
       options: {
         page: 1,
@@ -257,7 +257,7 @@ export default Vue.extend({
         const message = `The record of ${fullName} has been deleted successfully`;
         this.showToast({ title: "", message, type: "success" });
         this.isLoading = false;
-        this.students = this.students.filter((student: Student) => student.id !== id);
+        // this.students = this.students.filter((student: Student) => student.id !== id);
         this.confirmDelete = false
         
       } catch (error) {

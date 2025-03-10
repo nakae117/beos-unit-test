@@ -2,7 +2,7 @@ import { http, HttpResponse } from 'msw';
 
 export const handlers = [
   // Manejador para la solicitud GET /student
-  http.get('/students', async () => {
+  http.get('/students', () => {
     try {
       // Simula una respuesta exitosa con datos
       return HttpResponse.json({
@@ -19,26 +19,6 @@ export const handlers = [
             created_at: '2025-01-10T13:38:50.000000Z',
             updated_at: '2025-01-10T13:38:50.000000Z',
           },
-          {
-            id: 1,
-            first_name: 'Yetsimar',
-            last_name: 'Rodriguez',
-            email: 'yetsimar.rodriguez@example.com',
-            age: '25',
-            gender: 'M',
-            degree: 'Licenciatura',
-            phone: '04141234567',
-        },
-        {
-            id: 2,
-            first_name: 'Karina',
-            last_name: 'Medina',
-            email: 'karina.medina@example.com',
-            age: '22',
-            gender: 'F',
-            degree: 'Ingeniería',
-            phone: '04142345678',
-        }
         ],
         total: 1,
       });
@@ -52,7 +32,7 @@ export const handlers = [
   }),
 
   // Manejador para la solicitud DELETE /student/delete/:id
-  http.delete('/students/:id', async ({ params }) => {
+  http.delete('/students/:id', ({ params }) => {
     try {
       const { id } = params;
 
