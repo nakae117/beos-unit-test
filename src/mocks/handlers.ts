@@ -20,7 +20,7 @@ export const handlers = [
             updated_at: '2025-01-10T13:38:50.000000Z',
           },
         ],
-        total: 1,
+        total: 3,
       });
     } catch (error) {
       // Simula un error en la petición GET
