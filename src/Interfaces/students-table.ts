@@ -18,6 +18,11 @@ export interface Student {
   updated_at: string;
 }
 
+export interface StudentResponse {
+  data: Student[];
+  total: number;
+}
+
 export interface PaginationOptions {
   page: number;
   sort_by: string;

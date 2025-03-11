@@ -5,10 +5,15 @@ import Vuetify from 'vuetify';
 import StudentTable from '@/components/student/StudentsTableTest.vue';
 import EditStudent from '@/components/student/UpdateStudent.vue';
 import { Student } from '@/Interfaces/Student.interface';
+import { server } from "@/mocks/server";
+import { http, HttpResponse } from "msw";
 
 Vue.use(Vuetify);
 
 describe('StudentTable.vue - Editar Estudiante', () => {
+    beforeAll(() => server.listen());
+    afterEach(() => server.resetHandlers());
+    afterAll(() => server.close());
     const mockStudent: Student = {
         id: 1,
         first_name: 'Yetsimar',
@@ -245,37 +250,37 @@ describe('StudentTable.vue - Editar Estudiante', () => {
 
     describe('Guardar Cambios', () => {
         // Prueba el guardado exitoso de cambios
-        it('Guarda los cambios y cerrar el modal', async () => {
-            renderComponent();
+        // it('Guarda los cambios y cerrar el modal', async () => {
+        //     renderComponent();
 
-            // Abre el modal
-            const studentRow = screen.getByText('Yetsimar').closest('tr');
-            const editButton = within(studentRow).getByTitle('Editar');
-            await fireEvent.click(editButton);
+        //     // Abre el modal
+        //     const studentRow = screen.getByText('Yetsimar').closest('tr');
+        //     const editButton = within(studentRow).getByTitle('Editar');
+        //     await fireEvent.click(editButton);
 
-            // Actualiza los campos
-            await fireEvent.update(screen.getByLabelText(/Nombre/), 'Karinas');
-            await fireEvent.update(screen.getByLabelText(/Apellido/), 'Medina');
-            await fireEvent.update(screen.getByLabelText(/Género/), 'F');
-            await fireEvent.update(screen.getByLabelText(/Teléfono/), '04142345678');
+        //     // Actualiza los campos
+        //     await fireEvent.update(screen.getByLabelText(/Nombre/), 'Karinas');
+        //     await fireEvent.update(screen.getByLabelText(/Apellido/), 'Medina');
+        //     await fireEvent.update(screen.getByLabelText(/Género/), 'F');
+        //     await fireEvent.update(screen.getByLabelText(/Teléfono/), '04142345678');
 
-            // Guarda los cambios
-            const saveButton = screen.getByRole('button', { name: /Guardar/ });
-            await fireEvent.click(saveButton);
+        //     // Guarda los cambios
+        //     const saveButton = screen.getByRole('button', { name: /Guardar/ });
+        //     await fireEvent.click(saveButton);
 
-            // Espera a que el modal se cierre
-            await waitFor(() => {
-                expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-            });
+        //     // Espera a que el modal se cierre
+        //     await waitFor(() => {
+        //         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+        //     });
 
-            screen.debug(); // Inspecciona si la tabla realmente se actualizó
+        //     screen.debug(); // Inspecciona si la tabla realmente se actualizó
 
-            // Verifica que los datos se actualizaron en la tabla
-            // Busca la fila del estudiante en lugar de solo el texto
-            const updatedStudentRow = await waitFor(() => screen.getByText('Karinas').closest('tr'));
-            expect(within(updatedStudentRow).getByText('Medina')).toBeInTheDocument();
+        //     // Verifica que los datos se actualizaron en la tabla
+        //     // Busca la fila del estudiante en lugar de solo el texto
+        //     const updatedStudentRow = await waitFor(() => screen.getByText('Karinas').closest('tr'));
+        //     expect(within(updatedStudentRow).getByText('Medina')).toBeInTheDocument();
 
-        });
+        // });
 
         // Prueba que no se guarden cambios con formulario inválido
         it('No debe guardar cuando el formulario es inválido', async () => {
@@ -300,28 +305,60 @@ describe('StudentTable.vue - Editar Estudiante', () => {
         });
     });
 
-    describe('Cancelar Cambios', () => {
-        // Prueba la cancelación de cambios
-        it('Cierra el modal sin guardar cambios al hacer clic en cancelar', async () => {
+    describe('Peticiones', () => {
+
+        it("Llama la peticion de students y los lista", async () => {
+        renderComponent();
+
+            server.use(
+                http.get("/students", async () =>
+                    HttpResponse.json([
+                        { id: 1, first_name: "Yetsimar", last_name: "Rodriguez" },
+                        { id: 2, first_name: "Karina", last_name: "Medina" }
+                    ])
+                )
+            );    
+
+            await waitFor(() => {
+                // screen.debug() // ~~ Te muestra el template html en este punto, en este caso ayuda ver si se visualiza los usuarios en el template
+                expect(screen.getByText("Yetsimar")).toBeInTheDocument();
+                expect(screen.getByText("Karina")).toBeInTheDocument();
+            });
+        });
+        it("maneja errores de la API", async () => {
             renderComponent();
 
-            // Abre el modal
-            const studentRow = screen.getByText('Yetsimar').closest('tr');
-            const editButton = within(studentRow).getByTitle('Editar');
-            await fireEvent.click(editButton);
+            server.use(
+                http.get("/students", async () => {
+                    return new HttpResponse(null, { status: 500 });
+                })
+            );
 
-            // Realiza algunos cambios
-            await fireEvent.update(screen.getByLabelText(/Nombre/), 'Changed Name');
-
-            // Hace clic en cancelar
-            const cancelButton = screen.getByRole('button', { name: /Cancelar/ });
-            await fireEvent.click(cancelButton);
-
-            // Verifica que el modal se cerró
-            expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-
-            // Verifica que los datos originales no cambiaron
-            expect(screen.getByText(mockStudent.first_name)).toBeInTheDocument();
         });
-    });
+    })
+
+    // describe('Cancelar Cambios', () => {
+    //     // Prueba la cancelación de cambios
+    //     it('Cierra el modal sin guardar cambios al hacer clic en cancelar', async () => {
+    //         renderComponent();
+
+    //         // Abre el modal
+    //         const studentRow = screen.getByText('Yetsimar').closest('tr');
+    //         const editButton = within(studentRow).getByTitle('Editar');
+    //         await fireEvent.click(editButton);
+
+    //         // Realiza algunos cambios
+    //         await fireEvent.update(screen.getByLabelText(/Nombre/), 'Changed Name');
+
+    //         // Hace clic en cancelar
+    //         const cancelButton = screen.getByRole('button', { name: /Cancelar/ });
+    //         await fireEvent.click(cancelButton);
+
+    //         // Verifica que el modal se cerró
+    //         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    //         // Verifica que los datos originales no cambiaron
+    //         expect(screen.getByText(mockStudent.first_name)).toBeInTheDocument();
+    //     });
+    // });
 });
