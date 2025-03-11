@@ -40,7 +40,7 @@ export const handlers = [
             phone: '04142345678',
         }
         ],
-        total: 1,
+        total: 3,
       });
     } catch (error) {
       // Simula un error en la petición GET

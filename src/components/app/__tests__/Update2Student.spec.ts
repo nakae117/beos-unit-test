@@ -7,6 +7,8 @@ import EditStudent from '@/components/student/UpdateStudent.vue';
 import { Student } from '@/Interfaces/Student.interface';
 import { server } from "@/mocks/server";
 import { http, HttpResponse } from "msw";
+import { getStudent } from "@/services/studentService";
+
 
 Vue.use(Vuetify);
 
@@ -309,15 +311,8 @@ describe('StudentTable.vue - Editar Estudiante', () => {
 
         it("Llama la peticion de students y los lista", async () => {
         renderComponent();
-
-            server.use(
-                http.get("/students", async () =>
-                    HttpResponse.json([
-                        { id: 1, first_name: "Yetsimar", last_name: "Rodriguez" },
-                        { id: 2, first_name: "Karina", last_name: "Medina" }
-                    ])
-                )
-            );    
+            const students =  await getStudent()
+            expect(students.data).toHaveLength(3) 
 
             await waitFor(() => {
                 // screen.debug() // ~~ Te muestra el template html en este punto, en este caso ayuda ver si se visualiza los usuarios en el template
