@@ -11,37 +11,20 @@
         v-if="loading"
         type="table-heading, list-item-two-line, table-tfoot"
       /> -->
-      
-      <v-data-table
-        title="tableDelete"
-        class="elevation-1"
-        :headers="headers"
-        :items="students"
-        :items-per-page.sync="options.per_page"
-        :page.sync="options.page"
-        :server-items-length="total"
-        :footer-props="footerProps"
-      >
+
+      <v-data-table title="tableDelete" class="elevation-1" :headers="headers" :items="students"
+        :items-per-page.sync="options.per_page" :page.sync="options.page" :server-items-length="total"
+        :footer-props="footerProps">
         <template v-slot:[`item.actions`]="{ item, index }">
           <v-btn icon @click="viewStudent(item)">
             <v-icon> visibility </v-icon>
           </v-btn>
 
-          <v-btn
-            icon
-            data-test="edit-button"
-            title="Editar"
-            id="btn-edit"
-            @click="openEditModal(item)"
-          >
+          <v-btn icon data-test="edit-button" title="Editar" id="btn-edit" @click="openEditModal(item)">
             <v-icon>edit</v-icon>
           </v-btn>
 
-          <v-btn
-            icon
-            :title="`Delete${index}`"
-            @click="setInfoDelete(item)"
-          >
+          <v-btn icon :title="`Delete${index}`" @click="setInfoDelete(item)">
             <v-icon> delete </v-icon>
           </v-btn>
         </template>
@@ -50,30 +33,13 @@
 
     <CreateStudent :value="isOpenModal" @input="handleInput" />
 
-    <UpdateStudent
-      v-if="isEditModalOpen"
-      :value="isEditModalOpen"
-      :selected-student="selectedStudent"
-      @save="handleSaveStudent"
-      @close="closeEditModal"
-    />
-    
-    <Confirmation
-      v-model="confirmDelete"
-      :confirm-action="deleteStudent"
-      :title="title"
-      :message="message"
-      :text-confirm="textConfirm"
-      :is-loading="isLoading"
-    />
+    <UpdateStudent v-if="isEditModalOpen" :value="isEditModalOpen" :selected-student="selectedStudent"
+      @save="handleSaveStudent" @close="closeEditModal" />
 
-    <DetailsModal
-      v-model="showDetails"
-      :confirm-action="deleteStudent"
-      title="Info"
-      :data="details"
-      width="500px"
-    />
+    <Confirmation v-model="confirmDelete" :confirm-action="deleteStudent" :title="title" :message="message"
+      :text-confirm="textConfirm" :is-loading="isLoading" />
+
+    <DetailsModal v-model="showDetails" :confirm-action="deleteStudent" title="Info" :data="details" width="500px" />
   </div>
 </template>
 
@@ -92,7 +58,7 @@ import {
   FooterProps,
   // ApiResponse,
 } from "@/Interfaces/students-table";
-import { getStudent, deleteStudent } from "@/services/studentService";
+import { getStudent, deleteStudent, updateStudent } from "@/services/studentService";
 
 export default Vue.extend({
   name: "StudentTable",
@@ -112,7 +78,7 @@ export default Vue.extend({
       loading: false,
       confirmDelete: false,
       showDetails: false,
-      details: {}  as Student,
+      details: {} as Student,
       headers: [
         { text: "First Name", value: "first_name", sortable: false },
         { text: "Last Name", value: "last_name", sortable: false },
@@ -217,13 +183,9 @@ export default Vue.extend({
       this.selectedStudent = null;
     },
 
-    handleSaveStudent(updatedStudent: Student): void {
-      const index = this.students.findIndex(
-        (s: Student) => s.id === updatedStudent.id
-      );
-      if (index !== -1) {
-        this.$set(this.students, index, { ...updatedStudent });
-      }
+    async handleSaveStudent(updatedStudent: Student): Promise<void> {
+      await updateStudent(updatedStudent)
+      this.chargeStudent();
       this.isEditModalOpen = false;
     },
 
@@ -259,7 +221,7 @@ export default Vue.extend({
         this.isLoading = false;
         // this.students = this.students.filter((student: Student) => student.id !== id);
         this.confirmDelete = false
-        
+
       } catch (error) {
         console.error('Error deleting student:', error);
       }

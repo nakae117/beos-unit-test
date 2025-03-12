@@ -1,9 +1,19 @@
+import { Student } from '@/Interfaces/Student.interface';
 import { StudentResponse } from '@/Interfaces/students-table';
 import axios from 'axios';
 
 export const getStudent = async (): Promise<StudentResponse> => {
   try {
     const response = await axios.get<StudentResponse>('/students');
+    return response.data;
+  } catch (error) {
+    console.error('Error al traer los estudiantes con Axios:', error);
+  }
+};
+
+export const updateStudent = async (form: Student): Promise<StudentResponse> => {
+  try {
+    const response = await axios.put<StudentResponse>(`/students/${form.id}`, form);
     return response.data;
   } catch (error) {
     console.error('Error al traer los estudiantes con Axios:', error);
