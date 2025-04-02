@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 import { createLocalVue, mount } from '@vue/test-utils';
+import { postSubjects } from '@/services/subject';
 import CreateSubject from '@/components/subject/CreateSubject.vue';
 import Toast from "vue-toastification";
 
@@ -9,9 +10,12 @@ let vuetify: Vuetify
 
 Vue.use(Vuetify)
 Vue.use(Toast);
+
+jest.mock('@/services/subject', () => ({
+    postSubjects: jest.fn().mockResolvedValue({ data: { success: true } }),
+}));
 describe('CreateSubject.vue', () => {
     let wrapper: any;
-
     beforeEach(() => {
         vuetify = new Vuetify()
         wrapper = mount(CreateSubject, {
@@ -30,35 +34,99 @@ describe('CreateSubject.vue', () => {
     });
 
 
-    it('should verify that required fields are filled and have valid values before saving data', async () => {
-        const name = wrapper.find('input#name');
-        const code = wrapper.find('input#code');
+    // it('verifying required fields', async () => {
+    //     const name = wrapper.find('input#name');
+    //     const credits = wrapper.find('input#credits');
+    //     const modeSelect = wrapper.findComponent({ ref: 'mode' });
+    //     const studentsEnrolled = wrapper.find('input#studentsEnrolled');
+    //     const code = wrapper.find('input#code');
+    //     await name.setValue('Math');
+    //     await code.setValue('I290');
+    //     await credits.setValue(Number(3));
+    //     await studentsEnrolled.setValue(Number(25));
+    //     await modeSelect.vm.$emit('input', 'online');
 
-        // Simulate filling in the input fields
-        await name.setValue('Mathematics');
-        await code.setValue('I290');
 
-        const saveButton = wrapper.find('button#save-button');
-        await saveButton.trigger('click');
-        expect(name.element.value).not.toBe('');
-        expect(code.element.value).not.toBe('');
+    //     expect(name.element.value).not.toBe('');
+    //     expect(code.element.value).not.toBe('');
+    //     expect(Number(credits.element.value)).not.toBeNaN();
+    //     expect(modeSelect.vm.value).toBe('online');
+    //     expect(Number(studentsEnrolled.element.value)).not.toBeNaN();
+    // });
+
+    it("should verify if modal closes", async () => {
+        const close = wrapper.find('button#close-button');
+        await close.trigger('click');
+        expect(wrapper.emitted().input).toBeTruthy();
     });
 
-    it('should verify that optional fields are in correct format if filled', async () => {
+
+    it("if data is saved successfully", async () => {
+        const name = wrapper.find('input#name');
         const credits = wrapper.find('input#credits');
         const modeSelect = wrapper.findComponent({ ref: 'mode' });
         const studentsEnrolled = wrapper.find('input#studentsEnrolled');
- 
-        await credits.setValue('3');
+        const code = wrapper.find('input#code');
+        const saveButton = wrapper.find('button#save-button');
+
+        await name.setValue('Math');
+        await code.setValue('I290');
+        await credits.setValue(3);
+        await studentsEnrolled.setValue(25);
         await modeSelect.vm.$emit('input', 'online');
-        await studentsEnrolled.setValue('25');
+
+        expect(name.element.value).toBe('Math');
+        expect(code.element.value).toBe('I290');
+        expect(Number(credits.element.value)).toBe(3);
+        expect(modeSelect.vm.value).toBe('online');
+        expect(Number(studentsEnrolled.element.value)).toBe(25);
+
+        await saveButton.trigger('click');
+
+        expect(postSubjects).toHaveBeenCalledWith({
+            name: name.element.value,
+            code: code.element.value,
+            credits: Number(credits.element.value),
+            studentsEnrolled: Number(studentsEnrolled.element.value),
+            mode: modeSelect.vm.value,
+        });
+
+        expect(wrapper.vm.form).toEqual({
+            name: '',
+            credits: 0,
+            studentsEnrolled: 0,
+            code: '',
+            mode: '',
+        });
+        await wrapper.setProps({ value: false });
+        expect(wrapper.vm.dialog).toBe(false);
+    });
+
+    it("if fields are empty", async () => {
+        const name = wrapper.find('input#name');
+        const credits = wrapper.find('input#credits');
+        const modeSelect = wrapper.findComponent({ ref: 'mode' });
+        const studentsEnrolled = wrapper.find('input#studentsEnrolled');
+        const code = wrapper.find('input#code');
+        const showToastSpy = jest.spyOn(wrapper.vm, 'showToast');
+
+        await name.setValue('');
+        await code.setValue('');
+        await credits.setValue('');
+        await studentsEnrolled.setValue('');
+        await modeSelect.vm.$emit('input', '');
 
         const saveButton = wrapper.find('button#save-button');
         await saveButton.trigger('click');
 
-        expect(credits.element.value).toMatch(/^(?:[0-9]|[1-9][0-9])$/);
-        expect(['online', 'presencial', 'híbrido']).toContain(wrapper.vm.form.mode);
-        expect(studentsEnrolled.element.value).not.toBe('');
+        await Vue.nextTick();
+
+        expect(wrapper.vm.dialog).toBe(true);
+        expect(wrapper.vm.$refs.form.validate()).toBe(false);
+        expect(showToastSpy).toHaveBeenCalledWith({
+            title: "Error",
+            message: "Por favor, rellene los campos correctamente."
+        });
     });
 
 });

@@ -26,8 +26,9 @@ export interface FooterProps {
 }
 
 export interface ApiResponse<T> {
-    data: T[];
-    total: number;
+    data: T;
+    total?: number;
+    message?: string;
 }
 
 export interface SubjectTable extends Vue {

@@ -24,39 +24,88 @@
         :footer-props="footerProps"
       >
         <template v-slot:[`item.actions`]="{ item, index }">
-          <v-btn icon @click="showInfo(item)">
+          <v-btn id="visibility" title="Editar" icon @click="showInfo(item)">
             <v-icon>visibility</v-icon>
           </v-btn>
 
-          <v-btn icon @click="item.id">
+          <v-btn id="edit" title="View" icon @click="openEdit(item)">
             <v-icon>edit</v-icon>
           </v-btn>
 
-          <v-btn icon :title="`Delete${index}`" @click="setInfoDelete(item)">
+          <v-btn
+            id="delete"
+            icon
+            :title="`Delete${index}`"
+            @click="setInfoDelete(item)"
+          >
             <v-icon>delete</v-icon>
           </v-btn>
         </template>
       </v-data-table>
     </v-container>
-    <CreateStudent :value="isOpenModal" @input="handleInput" />
+    <CreateStudent
+      :value="isOpenModal"
+      :update-data.sync="updateData"
+      @input="handleInput"
+    />
+    <ViewSubject
+      :value="isOpenViewModal"
+      :data="data"
+      @input="handleViewInput"
+    />
+    <EditSubject
+      :value.sync="isOpenEditModal"
+      :subject="data"
+      :update-data.sync="updateEditData"
+      @input="handleEditInput"
+    />
+    <Confirmation
+      v-model="confirmDelete"
+      :confirm-action="deleteSub"
+      :title="title"
+      :message="message"
+      :text-confirm="textConfirm"
+      :is-loading="isLoading"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import CreateStudent from "./CreateSubject.vue";
+import EditSubject from "./EditSubject.vue";
+import ViewSubject from "./ViewSubject.vue";
+import Confirmation from "@/components/utils/Confirmation.vue";
+import { getSubjects, deleteSubject } from "@/services/subject";
 import {
   Header,
   //Subject,
   PaginationOptions,
   FooterProps,
+  Subject,
 } from "@/Interfaces/subjects";
 export default {
-  components: { CreateStudent },
+  components: { CreateStudent, ViewSubject, EditSubject, Confirmation },
   data() {
     return {
-      subjects: [],
+      subjects: [] as Subject[],
       isOpenModal: false,
       loading: false,
+      isLoading: false,
+      updateData: false,
+      confirmDelete: false,
+      updateEditData: false,
+      isOpenEditModal: false,
+      isOpenViewModal: false,
+      title: "Eliminar Materia",
+      textConfirm: "Confirmar",
+      message: "¿Estás seguro de que quieres eliminar esta materia?",
+      data: {
+        name: "",
+        credits: 0,
+        studentsEnrolled: 0,
+        code: "",
+        mode: "",
+      },
       total: 1,
       modes: ["online", "presencial", "híbrido"],
       options: {
@@ -91,12 +140,85 @@ export default {
       } as FooterProps,
     };
   },
+  mounted() {
+    this.getSubjects();
+  },
+  watch: {
+    updateData(val) {
+      if (val) {
+        this.getSubjects();
+      }
+      this.updateData = false;
+    },
+    updateEditData(val) {
+      if (val) {
+        this.getSubjects();
+      }
+      this.updateEditData = false;
+    },
+  },
   methods: {
+    async getSubjects() {
+      this.loading = true;
+
+      try {
+        const { data, total } = await getSubjects();
+        this.subjects = data;
+        this.total = total;
+      } catch (error) {
+        console.error("Error making request:", error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
     openCreate() {
       this.isOpenModal = true;
     },
+    showInfo(item: Subject) {
+      this.data = { ...item };
+      this.isOpenViewModal = true;
+    },
+    openEdit(item: Subject) {
+      this.data = { ...item }; // Asegurar una copia fresca del objeto
+      this.isOpenEditModal = false; // Cerrar el modal temporalmente para forzar la reactividad
+      this.$nextTick(() => {
+        this.isOpenEditModal = true; // Volver a abrir después de que Vue procese los cambios
+      });
+    },
+    async deleteSub() {
+      this.isLoading = true;
+
+      try {
+        const response = await deleteSubject(this.data.code);
+        // Eliminar la materia del listado
+        this.subjects = this.subjects.filter(
+          (subject) => subject.code !== this.data.code
+        );
+        this.confirmDelete = false; // Cerrar el modal de confirmación
+        this.$emit("update-data", true); // Trigger to reload data
+        this.$toast.success(response.message); // Mostrar mensaje de éxito
+      } catch (error) {
+        console.error("Error deleting subject:", error);
+        this.$toast.error("Error al eliminar la materia");
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    setInfoDelete(item: Subject) {
+      this.data = { ...item };
+      this.title = "Confirmation";
+      this.textConfirm = "Confirm";
+      this.confirmDelete = true;
+    },
+    handleViewInput(val: boolean) {
+      this.isOpenViewModal = val;
+    },
     handleInput(val: boolean) {
       this.isOpenModal = val;
+    },
+    handleEditInput(val: boolean) {
+      this.isOpenEditModal = val;
     },
   },
 };

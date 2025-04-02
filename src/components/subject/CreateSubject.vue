@@ -7,49 +7,49 @@
           <v-row class="d-flex flex-row">
             <v-col>
               <v-text-field
-                label="Nombre"
-                v-model="form.name"
-                outlined
                 id="name"
-                :rules="[rules.required, rules.name]"
+                v-model="form.name"
+                label="Nombre"
+                outlined
                 maxlength="32"
+                :rules="[rules.required, rules.name]"
               />
               <v-text-field
-                label="Creditos"
+                id="credits"
                 v-model="form.credits"
+                label="Creditos"
                 outlined
                 type="number"
-                id="credits"
-                :rules="[rules.required, rules.number]"
                 maxlength="2"
+                :rules="[rules.required, rules.number]"
               />
               <v-text-field
-                label="Code"
-                v-model="form.code"
-                outlined
                 id="code"
+                v-model="form.code"
+                label="Code"
+                outlined
                 :rules="[rules.required]"
               />
             </v-col>
             <v-col>
               <v-select
-                label="Modes"
-                v-model="form.mode"
                 id="mode"
                 ref="mode"
-                :rules="[rules.required]"
-                :items="modes"
+                v-model="form.mode"
+                label="Modalidad"
                 outlined
+                :items="['online', 'presencial', 'híbrido']"
+                :rules="[rules.required]"
               />
 
               <v-text-field
-                label="Estudiantes Inscritos"
+                id="studentsEnrolled"
                 v-model="form.studentsEnrolled"
+                label="Estudiantes Inscritos"
                 outlined
                 type="number"
-                id="studentsEnrolled"
-                :rules="[rules.required, rules.number]"
                 maxlength="32"
+                :rules="[rules.required, rules.number]"
               />
             </v-col>
           </v-row>
@@ -58,7 +58,7 @@
       <v-card-actions class="d-flex justify-end px-4 py-4">
         <v-spacer />
         <v-btn id="close-button" class="mr-4" @click="closeModal">Cerrar</v-btn>
-        <v-btn id="save-button" color="primary" @click="saveStudent"
+        <v-btn id="save-button" color="primary" @click="saveSubject"
           >Guardar</v-btn
         >
       </v-card-actions>
@@ -70,8 +70,7 @@
 import ToastMixin from "@/components/UI/Toast/Toast.vue";
 import { Subject } from "@/Interfaces/subjects";
 import rules from "@/utils/rules";
-import axios from "axios";
-
+import { postSubjects } from "@/services/subject";
 export default {
   name: "CreateSubject",
   mixins: [ToastMixin],
@@ -87,7 +86,7 @@ export default {
         code: "",
         mode: "",
       } as Subject,
-      valid: true,
+      valid: false,
       rules: rules,
       modes: ["online", "presencial", "híbrido"],
     };
@@ -111,21 +110,37 @@ export default {
     },
   },
   methods: {
-    async saveStudent() {
+    async saveSubject() {
       if (this.$refs.form.validate()) {
-        this.dialog = false;
-        await axios
-          .post("student/store", this.form)
-          .then((resp) => {
-            console.log(resp.data);
-          })
-          .catch((error) => {
-            console.error("Error making request:", error);
-          });
+        const payload = {
+          name: this.form.name,
+          code: this.form.code,
+          credits: Number(this.form.credits),
+          studentsEnrolled: Number(this.form.studentsEnrolled),
+          mode: this.form.mode,
+        };
+
+        const response = await postSubjects(payload);
+        this.showToast({
+          message: response.message,
+          type: "success",
+        });
+        this.$emit("update:update-data", true);
+        this.$emit("input", false);
+        this.clearInputs();
       } else {
         const message = "Por favor, rellene los campos correctamente.";
         this.showToast({ title: "Error", message });
       }
+    },
+    clearInputs() {
+      this.form = {
+        name: "",
+        credits: 0,
+        studentsEnrolled: 0,
+        code: "",
+        mode: "",
+      };
     },
     closeModal() {
       this.dialog = false;

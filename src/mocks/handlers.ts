@@ -1,4 +1,5 @@
 import { Student } from '@/Interfaces/Student.interface';
+import { Subject } from '@/Interfaces/subjects';
 import { http, HttpResponse } from 'msw';
 const students: Student[] = [
   {
@@ -34,6 +35,28 @@ const students: Student[] = [
     phone: '04142345678',
   }
 ];
+
+const subjects: Subject[] = [{
+  name: 'Mathematics',
+  credits: 3,
+  studentsEnrolled: 25,
+  code: 'I290',
+  mode: 'online',
+},
+{
+  name: 'Physics',
+  credits: 4,
+  studentsEnrolled: 30,
+  code: 'P101',
+  mode: 'presencial',
+},
+{
+  name: 'Chemistry',
+  credits: 3,
+  studentsEnrolled: 20,
+  code: 'C202',
+  mode: 'híbrido',
+}]
 export const handlers = [
   // Manejador para la solicitud GET /student
   http.get('/students', () => {
@@ -106,6 +129,105 @@ export const handlers = [
     } catch (error) {
       return HttpResponse.json(
         { message: 'Error al actualizar el estudiante' },
+        { status: 500 }
+      );
+    }
+  }),
+
+  http.get('/subjects', async () => {
+    try {
+      return HttpResponse.json({
+        data: subjects, total: 3
+      });
+    } catch (error) {
+      return HttpResponse.json(
+        { message: 'Error al obtener las materias' },
+        { status: 500 }
+      );
+    }
+  }),
+
+  http.post('/subjects', async ({ request }) => {
+    try {
+      const newSubject = await request.json() as Subject;
+
+      // Validamos que los campos requeridos estén presentes
+      if (!newSubject.name || !newSubject.credits || !newSubject.code || !newSubject.mode) {
+        return HttpResponse.json(
+          { message: 'Todos los campos son obligatorios' },
+          { status: 400 }
+        );
+      }
+
+      subjects.push(newSubject);
+
+      return HttpResponse.json({
+        message: 'Materia creada con éxito',
+        data: newSubject,
+      }, { status: 201 });
+
+    } catch (error) {
+      return HttpResponse.json(
+        { message: 'Error al crear la materia' },
+        { status: 500 }
+      );
+    }
+  }),
+
+
+  http.put('/subjects/:code', async ({ params, request }) => {
+    try {
+      const { code } = params;
+      const subjectIndex = subjects.findIndex(subject => subject.code === code);
+
+      if (subjectIndex === -1) {
+        return HttpResponse.json(
+          { message: `No se encontró la materia con código ${code}` },
+          { status: 404 }
+        );
+      }
+
+      const updatedData = await request.json() as Partial<Subject>;
+
+      // Actualiza solo los campos proporcionados
+      subjects[subjectIndex] = {
+        ...subjects[subjectIndex],
+        ...updatedData,
+      };
+
+      return HttpResponse.json({
+        message: 'Materia actualizada con éxito',
+        data: subjects[subjectIndex],
+      });
+    } catch (error) {
+      return HttpResponse.json(
+        { message: 'Error al actualizar la materia' },
+        { status: 500 }
+      );
+    }
+  }),
+
+  http.delete('/subjects/:code', ({ params }) => {
+    try {
+      const { code } = params;
+
+      // Simula un caso en el que la materia no existe
+      const subjectIndex = subjects.findIndex(subject => subject.code === code);
+      if (subjectIndex === -1) {
+        return HttpResponse.json(
+          { message: `No se encontró la materia con código ${code}` },
+          { status: 404 }
+        );
+      }
+
+      // Elimina la materia si existe
+      subjects.splice(subjectIndex, 1);
+
+      return HttpResponse.json({ message: `Materia eliminada con éxito` });
+    } catch (error) {
+      // Simula un error en la petición DELETE
+      return HttpResponse.json(
+        { message: 'Error al eliminar la materia' },
         { status: 500 }
       );
     }
