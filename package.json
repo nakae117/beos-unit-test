@@ -7,7 +7,6 @@
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "preinstall": "node preinstall.js"
   },
   "dependencies": {
     "core-js": "^3.8.3",
